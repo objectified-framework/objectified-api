@@ -1,0 +1,157 @@
+openapi: 3.1.0
+info:
+  title: Objectified API
+  version: 1.0.0
+  license:
+    name: Apache-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  description: |
+    Objectified is a **time-series object database that supports dynamic schemas**.
+    
+    This API specification defines REST services for Objectified.  Requests made to this server can only be made
+    using the `application/json` content type.
+  contact:
+    name: Objectified Project Members
+    url: https://github.com/objectified-framework/objectified
+servers:
+  - url: http://api.objectified.wiki/v1
+tags:
+  - name: Authentication
+    description: |
+      Authentication services for login, logout, and refresh.  It does not require use of `JWT`, as that token will
+      be provided and generated after login success.  The token returned in the login request is a **JWT token**.
+paths:
+  /auth:
+    post:
+      tags:
+        - Authentication
+      summary: Login service
+      operationId: login
+      description: Logs a user into the system via their username and password combination.
+      security: []
+      requestBody:
+        description: The user credentials with which to login.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username.
+                password:
+                  type: string
+                  description: The base64 encoded password.
+      responses:
+        '200':
+          description: OK, returns the JWT session token that must be stored on the client.
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Authorization failed or user access disabled
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /auth/{jwt}:
+    get:
+      tags:
+        - Authentication
+      summary: Login refresh service
+      operationId: refreshLogin
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: jwt
+          required: true
+          schema:
+            type: string
+          description: The JWT to refresh.
+      responses:
+        '204':
+          description: No content, refresh succeeded
+        '401':
+          description: Authorization failed, JWT token most likely invalid
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Forbidden, login timed out or not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      tags:
+        - Authentication
+      summary: Logout service
+      operationId: logout
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: jwt
+          required: true
+          schema:
+            type: string
+          description: The JWT session to delete
+      responses:
+        '204':
+          description: No content, logout succeeded
+        '401':
+          description: Authorization failed, JWT token most likely invalid
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Forbidden, login timed out or not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+components:
+  securitySchemes:
+    JWT:
+      type: http
+      description: JWT Authorization header using Bearer scheme.
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorMessage:
+      type: object
+      required:
+        - type
+        - title
+        - detail
+      description: |
+        This follows the IETF devised RFC-7807, which cxreates a generalized
+        error-handling schema.
+      properties:
+        type:
+          type: string
+          description: URI identifier that categorizes the error
+        title:
+          type: string
+          description: A brief, human-readable message about the error
+        status:
+          type: number
+          format: int32
+          description: The HTTP response code
+        detail:
+          type: string
+          description: A human-readable explanation of the error
+        instance:
+          type: string
+          description: A URI that identifies the specific occurrence of the error

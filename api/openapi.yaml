@@ -57,12 +57,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
         '403':
-          description: Forbidden
+          description: Access forbidden from using this service
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-  /auth/{jwt}:
     get:
       tags:
         - Authentication
@@ -70,13 +69,6 @@ paths:
       operationId: refreshLogin
       security:
         - JWT: []
-      parameters:
-        - in: path
-          name: jwt
-          required: true
-          schema:
-            type: string
-          description: The JWT to refresh.
       responses:
         '204':
           description: No content, refresh succeeded
@@ -87,7 +79,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
         '403':
-          description: Forbidden, login timed out or not found
+          description: Access forbidden or login timed out
           content:
             application/problem+json:
               schema:
@@ -99,13 +91,6 @@ paths:
       operationId: logout
       security:
         - JWT: []
-      parameters:
-        - in: path
-          name: jwt
-          required: true
-          schema:
-            type: string
-          description: The JWT session to delete
       responses:
         '204':
           description: No content, logout succeeded
@@ -116,7 +101,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
         '403':
-          description: Forbidden, login timed out or not found
+          description: Access forbidden or login timed out
           content:
             application/problem+json:
               schema:
@@ -136,8 +121,10 @@ components:
         - title
         - detail
       description: |
-        This follows the IETF devised RFC-7807, which cxreates a generalized
-        error-handling schema.
+        This follows the IETF devised RFC-7807, which creates a generalized
+        error-handling schema.  It contains information about the HTTP status code
+        returned, and _may_ contain associated data that could be used to recreate the
+        request that caused the failure.
       properties:
         type:
           type: string

@@ -114,6 +114,49 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    User:
+      type: object
+      required:
+        - username
+        - password
+        - emailAddress
+      description: |
+        `User` is a user account that can access the system.  It contains the user's username, password (encrypted),
+        email address, a verification flag, a status, and any profile data.
+      properties:
+        id:
+          type: integer
+          description: The numerical ID of the user.  (Auto-numbering, ignored on create.)
+        username:
+          type: string
+          maxLength: 80
+          description: Username
+          pattern: '^[A-Za-z0-9]*$'
+        password:
+          type: string
+          format: password
+          maxLength: 255
+          description: Password of any type encoded in Base64 format
+        emailAddress:
+          type: string
+          minLength: 10
+          maxLength: 255
+          format: email
+          description: Valid e-mail address for the user
+        verified:
+          type: boolean
+          description: Indicates whether or not the user record has verified their e-mail address.
+          default: false
+        status:
+          type: string
+          enum:
+            - enabled
+            - disabled
+          description: A status indicator for the user.
+          default: enabled
+        data:
+          type: object
+          description: A JSON payload that describes more information about the user in a freeform manner.
     ErrorMessage:
       type: object
       required:

@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Objectified API
-  version: 1.0.0
+  version: 0.0.1
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -106,6 +106,339 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Returns a list of all users.
+      operationId: listUsers
+      description: |
+        Returns a list of all users registered in Objectified, regardless of
+        enabled status.  Only users with administrative privileges may list users.
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: An array of users registered in Objectified.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          description: Authorization failed, JWT token most likely invalid
+        '403':
+          description: Access forbidden from using this service
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    post:
+      tags:
+        - Users
+      summary: Creates a new user.
+      operationId: createUser
+      description: Creates a new `User` record in the Objectified platform.
+      security:
+        - JWT: []
+      requestBody:
+        description: The `User` object to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Created successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /users/{userId}:
+    get:
+      tags:
+        - Users
+      summary: Returns a user by ID.
+      operationId: getUserById
+      description: Retrieves a user by its user ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the user.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+    put:
+      tags:
+        - Users
+      summary: Edit a user.
+      operationId: editUser
+      description: |
+        Applies changes to a user, only changing the values supplied in the
+        request body. Only administrators may make changes to user records
+        that do not belong to them. Use the `PUT` method to reactivate users
+        who have been deleted.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the user.
+      requestBody:
+        description: The user changes to apply.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '204':
+          description: No content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+    delete:
+      tags:
+        - Users
+      summary: Deletes (disables) a user.
+      operationId: disableUser
+      description: Disables a user.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the user.
+      responses:
+        '204':
+          description: No content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+  /users/{key}/verify:
+    get:
+      tags:
+        - Users
+      summary: Verifies a user via an e-mail key.
+      operationId: verifyUser
+      description: |
+        Validates a `User` email address through a key they received in an 
+        email message.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: string
+          description: The encoded key that was sent in the email.
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Token invalid
+        '500':
+          description: Request to validate timed out
+  /groups:
+    get:
+      tags:
+        - Groups
+      summary: Returns a list of Groups.
+      operationId: listGroups
+      description: Returns a list of all `Group`s registered.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: An array of `Group`s.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+        - Groups
+      summary: Creates a new Group.
+      operationId: createGroup
+      description: Creates a new `Group`.
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: The `Group` object to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      responses:
+        '201':
+          description: Created successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /groups/{groupId}:
+    get:
+      tags:
+        - Groups
+      summary: Returns a Group by ID.
+      operationId: getGroupById
+      description: Returns a `Group` object by its `Group` ID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the `Group`.
+      responses:
+        '200':
+          description: A group object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+  /groups/{groupId}/namespaces:
+    post:
+      tags:
+        - Groups
+      summary: Adds Namespaces to a Group.
+      operationId: addNamespacesToGroup
+      description: Adds `Namespace`s by ID to a `Group` membership by the `Group` ID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          description: The IDs of the `Group`s.
+      requestBody:
+        description: The parameters containing the `Namespace` and `Group` IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                namespaces:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: The `Namespace` IDs.
+                groupId:
+                  type: integer
+                  description: The `Group` ID.
+      responses:
+        '201':
+          description: Created successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /groups/{groupId}/users:
+    post:
+      tags:
+        - Groups
+      summary: Adds Users to a Group.
+      operationId: addUsersToGroup
+      description: Adds `User`s by ID to a `Group` membership by the `Group` ID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          description: The IDs of the `Group`s.
+      requestBody:
+        description: The parameters containing the `User` and `Group` IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: The `User` IDs.
+                groupId:
+                  type: integer
+                  format: int64
+                  description: The `Group` ID.
+      responses:
+        '201':
+          description: Created successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
 components:
   securitySchemes:
     JWT:
@@ -126,6 +459,7 @@ components:
       properties:
         id:
           type: integer
+          format: int64
           description: The numerical ID of the user.  (Auto-numbering, ignored on create.)
         username:
           type: string
@@ -136,13 +470,13 @@ components:
           type: string
           format: password
           maxLength: 255
-          description: Password of any type encoded in Base64 format
+          description: Password of any type encoded in `base64` format
         emailAddress:
           type: string
           minLength: 10
           maxLength: 255
           format: email
-          description: Valid e-mail address for the user
+          description: Valid e-mail address for the user - must be at least 10 characters in length.
         verified:
           type: boolean
           description: Indicates whether or not the user record has verified their e-mail address.
@@ -157,6 +491,30 @@ components:
         data:
           type: object
           description: A JSON payload that describes more information about the user in a freeform manner.
+    Group:
+      type: object
+      required:
+        - name
+        - description
+      description: |
+        `Group` is a tenancy grouping object.  It groups `User`s and `Namespace`s 
+        together, defining the access relationship between the two.
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The numerical ID of the group.  (Auto-numbering, ignored on create.)
+        name:
+          type: string
+          description: Alphanumeric common name of the group, cannot start with a number.
+          maxLength: 80
+          pattern: '^[A-Za-z][A-Za-z0-9]*$'
+        description:
+          type: string
+          description: |
+            A short description describing the group.  CommonMark _MAY_ be used
+            to describe the group.
+          maxLength: 4096
     ErrorMessage:
       type: object
       required:
@@ -167,21 +525,28 @@ components:
         This follows the IETF devised RFC-7807, which creates a generalized
         error-handling schema.  It contains information about the HTTP status code
         returned, and _may_ contain associated data that could be used to recreate the
-        request that caused the failure.
+        request that caused the failure.  The description of the schema is taken
+        from the RFC-9457 draft.
       properties:
         type:
           type: string
-          description: URI identifier that categorizes the error
+          format: uri-reference
+          description: A URI reference that identifies the problem type.
         title:
           type: string
-          description: A brief, human-readable message about the error
+          description: A brief, human-readable summary of the problem type.
         status:
           type: number
           format: int32
-          description: The HTTP response code
+          description: The HTTP status codew generated by the origin server for this occurrence of the problem.
+          minimum: 100
+          maximum: 599
         detail:
           type: string
-          description: A human-readable explanation of the error
+          description: A human-readable explanation specific to this occurrence of the problem.
         instance:
           type: string
-          description: A URI that identifies the specific occurrence of the error
+          format: uri-reference
+          description: |
+            A URI reference that identifies the specific occurrence of the problem.
+            It may or may not yield further information if dereferenced.

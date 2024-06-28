@@ -547,6 +547,10 @@ components:
             - disabled
           description: A status indicator for the user.
           default: enabled
+        createDate:
+          type: string
+          format: date-time
+          description: Creation date and time of the user.
         data:
           type: object
           description: A JSON payload that describes more information about the user in a freeform manner.
@@ -574,6 +578,10 @@ components:
             A short description describing the group.  CommonMark _MAY_ be used
             to describe the group.
           maxLength: 4096
+        createDate:
+          type: string
+          format: date-time
+          description: Creation date and time of the user.
     ErrorMessage:
       type: object
       required:

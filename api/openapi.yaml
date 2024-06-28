@@ -28,6 +28,22 @@ tags:
       
       `Group`s are also referred to as tenancy identifiers.  Users can be members of multiple
       `Group`s, but cannot join the same `Group` twice.
+  - name: Namespaces
+    description: |
+      `Namespace`s are names that are used to organize groups of objects.  They are used 
+      to prevent name collisions that can occur when multiple organizations may 
+      use similar names to describe different object definitions.
+
+      A `Namespace` ensures that all of a given set of objects have unique names so 
+      that they may easily be identified and separated under a common group.
+
+      For instance, one `Namespace`'s definition of a `User` may differ from another 
+      `Namespace`'s `User`. Same with a `Car`, `Bike`, or `Computer`.
+
+      A reserved `Namespace` is a core `Namespace` that is used by Objectified
+      internally.  These `Namespaces` cannot be altered, but they can be referred to 
+      in other `Namespace`s, should you choose to import them directly into your
+      `Namespace`.
 paths:
   /auth:
     post:
@@ -416,11 +432,9 @@ paths:
           name: groupId
           required: true
           schema:
-            type: array
-            items:
-              type: integer
-              format: int64
-          description: The IDs of the `Group`s.
+            type: integer
+            format: int64
+          description: The ID of the `Group`s.
       requestBody:
         description: The parameters containing the `User` and `Group` IDs.
         required: true
@@ -489,6 +503,303 @@ paths:
           description: Forbidden
         '404':
           description: Not found
+  /namespaces:
+    get:
+      tags:
+        - Namespaces
+      summary: Returns a list of all namespaces.
+      operationId: listNamespaces
+      description: Returns a list of all namespaces registered in Objectified, regardless of enabled flag status.
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: An array of namespaces registered in Objectified.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Namespace'
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+        - Namespaces
+      summary: Creates a new namespace.
+      operationId: createNamespace
+      description: Creates a new namespace.
+      security:
+        - JWT: []
+      requestBody:
+        description: The namespace object to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Namespace'
+      responses:
+        '201':
+          description: Created successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /namespaces/{namespaceId}:
+    get:
+      tags:
+        - Namespaces
+      summary: Retrieves a namespace by ID.
+      operationId: getNamespaceById
+      description: Gets a namespace by its serial ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the namespace to retrieve.
+      responses:
+        '200':
+          description: OK, returns the `Namespace` object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Namespace'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+    put:
+      tags:
+        - Namespaces
+      summary: Edit a namespace.
+      operationId: patchNamespace
+      description: Applies changes to a namespace, only changing the values supplied in the request body.
+      security:
+        - JWT: []
+      requestBody:
+        description: The namespace changes to apply.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Namespace'
+      responses:
+        '204':
+          description: No content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '409':
+          description: Conflict
+    delete:
+      tags:
+        - Namespaces
+      summary: Deletes (disables) a namespace.
+      operationId: disableNamespace
+      description: Disables a namespace.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the namespace to disable.
+      responses:
+        '204':
+          description: No content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+  /namespaces/{namespaceId}/groups:
+    post:
+      tags:
+        - Namespaces
+      summary: Adds Group Membership to a Namespace.
+      operationId: addGroupsToNamespace
+      description: Adds `Group`s by ID to a `Namespace` membership by the `Namespace` ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the `Namespace`.
+      requestBody:
+        description: The parameters containing the `Group` IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: The `Group` IDs.
+      responses:
+        '201':
+          description: Created successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      tags:
+        - Namespaces
+      summary: Removes Group Membership to a Namespace.
+      operationId: removeGroupsFromNamespace
+      description: Removes `Group`s by ID from a `Namespace` membership by the `Namespace` ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the `Namespace`.
+      requestBody:
+        description: The parameters containing the `Group` IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: The `Group` IDs.
+      responses:
+        '204':
+          description: No content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /namespaces/{namespaceId}/users:
+    post:
+      tags:
+        - Namespaces
+      summary: Adds User Membership to a Namespace.
+      operationId: addUsersToNamespace
+      description: Adds `User`s by ID to a `Namespace` membership by the `Namespace` ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the `Namespace`.
+      requestBody:
+        description: The parameters containing the `User` IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: The `User` IDs.
+      responses:
+        '201':
+          description: Created successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      tags:
+        - Namespaces
+      summary: Removes User Membership from a Namespace.
+      operationId: deleteUsersFromNamespace
+      description: Removes `User`s by ID to a `Namespace` membership by the `Namespace` ID.
+      security:
+        - JWT: [ ]
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the `Namespace`.
+      requestBody:
+        description: The parameters containing the `User` IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: The `User` IDs.
+      responses:
+        '204':
+          description: No content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
 components:
   securitySchemes:
     JWT:

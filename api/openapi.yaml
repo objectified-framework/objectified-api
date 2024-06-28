@@ -20,6 +20,14 @@ tags:
     description: |
       Authentication services for login, logout, and refresh.  It does not require use of `JWT`, as that token will
       be provided and generated after login success.  The token returned in the login request is a **JWT token**.
+  - name: Users
+    description: Services for `User` accounts.
+  - name: Groups
+    description: |
+      Manages `Group` membership that groups users into common logical groups.
+      
+      `Group`s are also referred to as tenancy identifiers.  Users can be members of multiple
+      `Group`s, but cannot join the same `Group` twice.
 paths:
   /auth:
     post:
@@ -282,7 +290,7 @@ paths:
       operationId: listGroups
       description: Returns a list of all `Group`s registered.
       security:
-        - bearerAuth: []
+        - JWT: []
       responses:
         '200':
           description: An array of `Group`s.
@@ -301,7 +309,7 @@ paths:
       operationId: createGroup
       description: Creates a new `Group`.
       security:
-        - bearerAuth: []
+        - JWT: []
       requestBody:
         description: The `Group` object to create.
         required: true
@@ -326,7 +334,7 @@ paths:
       operationId: getGroupById
       description: Returns a `Group` object by its `Group` ID.
       security:
-        - bearerAuth: []
+        - JWT: []
       parameters:
         - in: path
           name: groupId
@@ -348,51 +356,65 @@ paths:
           description: Forbidden
         '404':
           description: Not found
-  /groups/{groupId}/namespaces:
-    post:
+    put:
       tags:
         - Groups
-      summary: Adds Namespaces to a Group.
-      operationId: addNamespacesToGroup
-      description: Adds `Namespace`s by ID to a `Group` membership by the `Group` ID.
+      summary: Edits a Group by ID.
+      operationId: editGroupById
+      description: Edits a `Group` object by its `Group` ID.
       security:
-        - bearerAuth: []
+        - JWT: []
       parameters:
         - in: path
           name: groupId
           required: true
           schema:
-            type: array
-            items:
-              type: integer
-              format: int64
-          description: The IDs of the `Group`s.
+            type: integer
+            format: int64
+          description: The ID of the `Group`.
       requestBody:
-        description: The parameters containing the `Namespace` and `Group` IDs.
+        description: The `Group` object to create.
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                namespaces:
-                  type: array
-                  items:
-                    type: integer
-                    format: int64
-                  description: The `Namespace` IDs.
-                groupId:
-                  type: integer
-                  description: The `Group` ID.
+              $ref: '#/components/schemas/Group'
       responses:
-        '201':
-          description: Created successfully
+        '204':
+          description: No content
         '401':
           description: Unauthorized
         '403':
           description: Forbidden
+        '404':
+          description: Not found
         '409':
           description: Conflict
+    delete:
+      tags:
+        - Groups
+      summary: Deletes a Group by ID
+      operationId: deleteGroupById
+      description: Deletes a `Group` and its members by `Group` ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the `Group`.
+      responses:
+        '204':
+          description: No content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
   /groups/{groupId}/users:
     post:
       tags:
@@ -401,7 +423,7 @@ paths:
       operationId: addUsersToGroup
       description: Adds `User`s by ID to a `Group` membership by the `Group` ID.
       security:
-        - bearerAuth: []
+        - JWT: []
       parameters:
         - in: path
           name: groupId
@@ -426,10 +448,6 @@ paths:
                     type: integer
                     format: int64
                   description: The `User` IDs.
-                groupId:
-                  type: integer
-                  format: int64
-                  description: The `Group` ID.
       responses:
         '201':
           description: Created successfully
@@ -439,6 +457,47 @@ paths:
           description: Forbidden
         '409':
           description: Conflict
+    delete:
+      tags:
+        - Groups
+      summary: Removes Users from a Group.
+      operationId: deleteUsersFromGroup
+      description: Removes `User`s by ID from a `Group` membership by the `Group` ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: groupId
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          description: The IDs of the `Group`s.
+      requestBody:
+        description: The parameters containing the `User` and `Group` IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: The `User` IDs.
+      responses:
+        '204':
+          description: No content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
 components:
   securitySchemes:
     JWT:

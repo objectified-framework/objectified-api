@@ -8,8 +8,11 @@ info:
   description: |
     Objectified is a **time-series object database that supports dynamic schemas**.
 
-    This API specification defines REST services for Objectified.  Requests made to this server can only be made
-    using the `application/json` content type.
+    Objectified can also be utilized as a _Schema Store_, providing schema information
+    for a project, framework, or platform.
+
+    This API specification defines REST services for Objectified.  Requests made to
+    this server can only be made using the `application/json` content type.
   contact:
     name: Objectified Project Members
     url: https://github.com/objectified-framework/objectified
@@ -49,8 +52,59 @@ tags:
       `Class`es are templates that define the _shape_ (or _schema_) of data that 
       can be contained in a record (or instance).  For more information on best 
       practices on creating and updating classes, please 
-      [refer to this documentation](https://www.objectified.wiki/wiki/classes-best-practices)
+      [refer to this documentation](https://soon-to-be-created.com)
       for more detailed information.
+  - name: DataTypes
+    description: |
+      `DataType`s describe the types of data that can be stored in fields.
+
+      `DataType`s can contain arrays of data, enumerations, regular expressions, and
+      much more.
+
+      Reserved `DataType`s cannot be modified or removed, as they are considered 
+      core to the Objectified platform.  Normal `DataType`s are specific to their
+      `Namespace`.  Core `DataType`s are available system-wide, so use with care.
+
+      The most common usage for `DataType`s outside of the core `DataType`s is in
+      defining custom enumeration values.  Other `DataType`s like custom filters and
+      regular expressions can be created, but these occasions are generally rare.
+
+      Please [refer to this documentation](https://soon-to-be-created.com)
+      for more detailed on best practices regarding `DataType` and `Field` definitions.
+  - name: Fields
+    description: |
+      `Field`s are storage objects that utilize a `DataType` definition.
+      
+      `Field`s define the types of data that a class property can contain.  `Field`s
+      can be reused.  `Field`s are not indexed, whereas `Properties` can be.
+      
+      Please
+      [refer to this documentation](https://soon-to-be-created.com)
+      for more detailed on best practices regarding `DataType` and `Field` definitions.
+  - name: Properties
+    description: |
+      `Properties` are member stores that are used by `Class`es to store data 
+      defined by a `Field`.
+      
+      `Properties` extend `Fields` by adding items such as nullability,
+      default values, required flags, indexing, and so on.  `Properties` can also be
+      objects that implement other `Properties` (sub-properties).
+  - name: Instances
+    description: |
+      `Instances` are records created using `Class` definitions as templates.
+      
+      Instance data contains data associated with an `Instance`, organized by
+      version number and record date.
+  - name: Links
+    description: |
+      `Link`s describe data between `Class`es that have a commonality or logical
+      relationship.
+      
+      For instance, a `Car` might link a `Dealership` together, or an `Owner`.
+      `House`s may have `Mortgage`s, and so on.  `Link`s contain a left side (t1)
+      and a right side (t2), and link two `Class`es together.
+      
+      `Link`s may contain links to themselves (ie. a parent/child relationship.)
 paths:
   /auth:
     post:

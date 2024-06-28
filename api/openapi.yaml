@@ -232,6 +232,10 @@ paths:
           description: Not found
         '409':
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
     delete:
       tags:
         - Users
@@ -257,31 +261,6 @@ paths:
           description: Forbidden
         '404':
           description: Not found
-  /users/{key}/verify:
-    get:
-      tags:
-        - Users
-      summary: Verifies a user via an e-mail key.
-      operationId: verifyUser
-      description: |
-        Validates a `User` email address through a key they received in an 
-        email message.
-      security:
-        - JWT: []
-      parameters:
-        - in: path
-          name: key
-          required: true
-          schema:
-            type: string
-          description: The encoded key that was sent in the email.
-      responses:
-        '200':
-          description: OK
-        '404':
-          description: Token invalid
-        '500':
-          description: Request to validate timed out
   /groups:
     get:
       tags:
@@ -326,6 +305,10 @@ paths:
           description: Forbidden
         '409':
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
   /groups/{groupId}:
     get:
       tags:
@@ -390,6 +373,10 @@ paths:
           description: Not found
         '409':
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
     delete:
       tags:
         - Groups
@@ -457,6 +444,10 @@ paths:
           description: Forbidden
         '409':
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
     delete:
       tags:
         - Groups

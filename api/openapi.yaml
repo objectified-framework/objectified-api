@@ -573,6 +573,46 @@ components:
           type: string
           format: date-time
           description: Creation date and time of the user.
+    Namespace:
+      type: object
+      required:
+        - name
+        - description
+      description: |
+        `Namespace` is an object grouping definition.  It allows for objects, `Group`s,
+        `User`s, and other objects to be grouped in a common name.  It also prevents
+        `Group`s and `User`s from accessing objects outside of namespaces to which
+        they are not members.  Further access is controlled through `ABAC` definitions.
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The numerical ID of the namespace.  (Auto-numbering, ignored on create.)
+        creatorId:
+          type: integer
+          format: int64
+          description: The numerical ID of the user ID that created this object.  This is pulled from the session, and cannot be modified by any services.  Values supplied to this field at creation or edit time will be ignored.
+        name:
+          type: string
+          minLength: 10
+          maxLength: 80
+          description: A simple identifying name of the namespace following pattern `A-Za-z0-9`, should be camel-case.
+          pattern: '^[A-Za-z0-9]*$'
+        description:
+          type: string
+          maxLength: 4096
+          description: The description of the namespace.
+        status:
+          type: string
+          enum:
+            - enabled
+            - disabled
+          description: A status indicator for the namespace.
+          default: enabled
+        createDate:
+          type: string
+          format: date-time
+          description: Creation date and time.  Auto-filled, not required.
     ErrorMessage:
       type: object
       required:

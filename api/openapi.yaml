@@ -1194,6 +1194,110 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ErrorMessage"
+  /namespaces/{namespaceId}/properties:
+    get:
+      tags:
+        - Namespaces
+      summary: Returns a list of Properties by Namespace.
+      operationId: listPropertiesByNamespace
+      description: Returns a list of all `Properties` registered in the given `Namespace` ID, regardless of status.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Namespace`.
+      responses:
+        "200":
+          description: An array of `Properties`.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Property"
+        "401":
+          description: Unauthorized
+    post:
+      tags:
+        - Namespaces
+      summary: Assigns Properties to a Namespace.
+      operationId: addPropertiesToNamespace
+      description: Assigns `Property` definitions to a `Namespace`.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Namespace`.
+      requestBody:
+        description: The `Properties` by ID to add to the `Namespace`.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+                format: int64
+      responses:
+        "201":
+          description: Created successfully
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+    delete:
+      tags:
+        - Namespaces
+      summary: Removes Properties from a Namespace.
+      operationId: deletePropertiesFromNamespace
+      description: Removes `Properties` by ID to a `Namespace` membership by the `Namespace` ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the `Namespace`.
+      requestBody:
+        description: The parameters containing the `Property` IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: The `Property` IDs.
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
   /classes:
     post:
       tags:
@@ -1300,6 +1404,110 @@ paths:
           description: Forbidden
         "404":
           description: Not found
+  /classes/{classId}/properties:
+    get:
+      tags:
+        - Classes
+      summary: Returns a list of Properties by Class.
+      operationId: listPropertiesByClass
+      description: Returns a list of all `Properties` registered in the given `Class` ID, regardless of status.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: classId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Class`.
+      responses:
+        "200":
+          description: An array of `Properties`.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Property"
+        "401":
+          description: Unauthorized
+    post:
+      tags:
+        - Classes
+      summary: Adds Properties to a Class.
+      operationId: addPropertyToClass
+      description: Adds `Properties` by ID to a `Class` by the `Class` ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: classId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Class`.
+      requestBody:
+        description: The parameters containing the property and class IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+              description: The `Property` IDs.
+      responses:
+        "201":
+          description: Created successfully
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+    delete:
+      tags:
+        - Classes
+      summary: Removes Properties from a Class.
+      operationId: deletePropertiesFromClass
+      description: Removes `Properties` by ID to a `Class` membership by the `Class` ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: classId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the `Class`.
+      requestBody:
+        description: The parameters containing the `Property` IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: The `Property` IDs.
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
   /data-types:
     post:
       tags:
@@ -1504,6 +1712,212 @@ paths:
           description: Forbidden
         "404":
           description: Not found
+  /properties:
+    post:
+      tags:
+        - Properties
+      summary: Creates a new property.
+      operationId: createProperty
+      description: Creates a new property.
+      security:
+        - JWT: []
+      requestBody:
+        description: The property object to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Property"
+      responses:
+        "201":
+          description: Created successfully
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+  /properties/{propertyId}:
+    get:
+      tags:
+        - Properties
+      summary: Returns a property by ID.
+      operationId: getPropertyById
+      description: Returns a `Property` by its ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: propertyId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the property.
+      responses:
+        "200":
+          description: An array of properties.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+        "401":
+          description: Unauthorized
+    put:
+      tags:
+        - Properties
+      summary: Edit a property.
+      operationId: editProperty
+      description: Applies changes to a `Property`, only changing the values supplied in the request body.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: propertyId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the property.
+      requestBody:
+        description: The `Property` changes to apply.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Property"
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "409":
+          description: Conflict
+    delete:
+      tags:
+        - Properties
+      summary: Deletes a Property.
+      operationId: deleteProperty
+      description: Deletes a `Property` by ID
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: propertyId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Property` to remove.
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+  /properties/{propertyId}/object:
+    get:
+      tags:
+        - Properties
+      summary: Returns Properties by the object Property by ID.
+      operationId: getPropertyByObjectId
+      description: Returns `Properties` by its `Property` Object ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: propertyId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the object `Property`.
+      responses:
+        "200":
+          description: An array of `Properties`.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Object property by ID does not exist, or is not an object type
+    post:
+      tags:
+        - Properties
+      summary: Adds Properties to an object by Property ID.
+      operationId: addObjectToProperty
+      description: Adds `Properties` to an object by its `Property` ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: propertyId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the object `Property`.
+      requestBody:
+        description: The `Property` IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+              description: The `Property` IDs.
+      responses:
+        "201":
+          description: Created successfully
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Object property by ID does not exist, or is not an object type
+        "409":
+          description: Conflict
+    delete:
+      tags:
+        - Properties
+      summary: Deletes Properties from an object.
+      operationId: deletePropertiesFromObject
+      description: Removes `Properties` from an object `Property` by the `Property` IDs.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: propertyId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the object `Property`.
+      requestBody:
+        description: The `Property` IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+              description: The `Property` IDs.
+      responses:
+        "204":
+          description: Removed successfully
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Object property by ID does not exist, or is not an object type
+        "409":
+          description: Conflict
 components:
   securitySchemes:
     JWT:
@@ -1829,6 +2243,76 @@ components:
             - disabled
           description: A status of the `Field`.
           default: enabled
+        createDate:
+          type: string
+          format: date-time
+          description: Creation date and time.  Ignored if supplied, handled by the service.
+        updateDate:
+          type: string
+          format: date-time
+          description: Update date and time.  Ignored if supplied, handled by the service.
+        disableDate:
+          type: string
+          format: date-time
+          description: Deletion date and time.  Ignored if supplied, handled by the service.
+    Property:
+      type: object
+      required:
+        - namespaceId
+        - name
+        - description
+        - fieldId
+      description: |
+        `Property` assigns a field to a well defined storage key.  In Object Oriented terms, a property
+        contains a `Field` that defines the type of data it can store.
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The numerical ID of the property.  (Auto-numbering, ignored on create.)
+        namespaceId:
+          type: integer
+          format: int64
+          description: The numerical ID of the namespace to which this property belongs.
+        fieldId:
+          type: integer
+          format: int64
+          description: The numerical ID of the field to which this property is assigned.
+        name:
+          type: string
+          description: Alphanumeric common name of the property, cannot start with a number.
+          minLength: 2
+          maxLength: 80
+          pattern: "^[A-Za-z][A-Za-z0-9]*$"
+        description:
+          type: string
+          description: A short description describing the property.  CommonMark allowed.
+          maxLength: 4096
+        required:
+          type: boolean
+          description: Boolean flag indicating whether or not this property requires a value.
+          default: false
+        nullable:
+          type: boolean
+          description: Boolean flag indicating whether or not this poperty is nullable.
+          default: false
+        isArray:
+          type: boolean
+          description: Boolean flag indicating if this value expects an array of field data types.
+          default: false
+        defaultValue:
+          type: string
+          description: The default value of this property if not value is assigned.
+        status:
+          type: string
+          enum:
+            - enabled
+            - disabled
+          description: A status of the `Property`.
+          default: enabled
+        indexed:
+          type: boolean
+          description: Indicates whether or not the value of this property should be included for indexing in Objectified.
         createDate:
           type: string
           format: date-time

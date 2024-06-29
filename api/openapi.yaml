@@ -91,7 +91,7 @@ tags:
       `Properties` are member stores that are used by `Class`es to store data 
       defined by a `Field`.
 
-      `Properties` extend `Fields` by adding items such as nullability,
+      `Properties` extend `Fields` by adding options such as nullability,
       default values, required flags, indexing, and so on.  `Properties` can also be
       objects that implement other `Properties` (sub-properties).
   - name: Instances

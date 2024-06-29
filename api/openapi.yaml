@@ -641,10 +641,17 @@ paths:
       tags:
         - Namespaces
       summary: Edit a namespace.
-      operationId: patchNamespace
-      description: Applies changes to a namespace, only changing the values supplied in the request body.
+      operationId: editNamespace
+      description: Applies changes to a `Namespace`, only changing the values supplied in the request body.
       security:
         - JWT: []
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the namespace to retrieve.
       requestBody:
         description: The namespace changes to apply.
         required: true
@@ -1036,7 +1043,7 @@ paths:
         - JWT: [ ]
       parameters:
         - in: path
-          name: id
+          name: classId
           required: true
           schema:
             type: integer
@@ -1060,7 +1067,7 @@ paths:
         - JWT: [ ]
       parameters:
         - in: path
-          name: id
+          name: classId
           required: true
           schema:
             type: integer

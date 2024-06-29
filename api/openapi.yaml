@@ -74,10 +74,10 @@ tags:
   - name: Fields
     description: |
       `Field`s are storage objects that utilize a `DataType` definition.
-      
+
       `Field`s define the types of data that a class property can contain.  `Field`s
       can be reused.  `Field`s are not indexed, whereas `Properties` can be.
-      
+
       Please
       [refer to this documentation](https://soon-to-be-created.com)
       for more detailed on best practices regarding `DataType` and `Field` definitions.
@@ -85,25 +85,25 @@ tags:
     description: |
       `Properties` are member stores that are used by `Class`es to store data 
       defined by a `Field`.
-      
+
       `Properties` extend `Fields` by adding items such as nullability,
       default values, required flags, indexing, and so on.  `Properties` can also be
       objects that implement other `Properties` (sub-properties).
   - name: Instances
     description: |
       `Instances` are records created using `Class` definitions as templates.
-      
+
       Instance data contains data associated with an `Instance`, organized by
       version number and record date.
   - name: Links
     description: |
       `Link`s describe data between `Class`es that have a commonality or logical
       relationship.
-      
+
       For instance, a `Car` might link a `Dealership` together, or an `Owner`.
       `House`s may have `Mortgage`s, and so on.  `Link`s contain a left side (t1)
       and a right side (t2), and link two `Class`es together.
-      
+
       `Link`s may contain links to themselves (ie. a parent/child relationship.)
 paths:
   /auth:
@@ -888,19 +888,19 @@ paths:
             type: integer
           description: The ID of the `Namespace`.
       responses:
-        '200':
+        "200":
           description: An array of `Class`es.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Class'
-        '204':
+                  $ref: "#/components/schemas/Class"
+        "204":
           description: No content
-        '401':
+        "401":
           description: Unauthorized
-        '404':
+        "404":
           description: Not found
     post:
       tags:
@@ -909,7 +909,7 @@ paths:
       operationId: addClassesToNamespace
       description: Creates a new class.
       security:
-        - JWT: [ ]
+        - JWT: []
       parameters:
         - in: path
           name: namespaceId
@@ -928,13 +928,13 @@ paths:
                 type: integer
                 format: int64
       responses:
-        '201':
+        "201":
           description: Created successfully
-        '401':
+        "401":
           description: Unauthorized
-        '403':
+        "403":
           description: Forbidden
-        '409':
+        "409":
           description: Conflict
     delete:
       tags:
@@ -979,6 +979,110 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ErrorMessage"
+  /namespaces/{namespaceId}/data-types:
+    get:
+      tags:
+        - Namespaces
+      summary: Returns a list of DataTypes by Namespace.
+      operationId: listDataTypesForNamespace
+      description: Returns a list of all `DataType`s registered in the given `Namespace` ID, regardless of enabled flag status.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Namespace`.
+      responses:
+        "200":
+          description: An array of `DataType`s.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DataType"
+        "401":
+          description: Unauthorized
+    post:
+      tags:
+        - Namespaces
+      summary: Assigns DataTypes to a Namespace.
+      operationId: addDataTypesToNamespace
+      description: Assigns `DataType` definitions to a `Namespace`.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Namespace`.
+      requestBody:
+        description: The `DataType`s by ID to add to the `Namespace`.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+                format: int64
+      responses:
+        "201":
+          description: Created successfully
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+    delete:
+      tags:
+        - Namespaces
+      summary: Removes DataTypes from a Namespace.
+      operationId: deleteDataTypesFromNamespace
+      description: Removes `DataType`s by ID to a `Namespace` membership by the `Namespace` ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: namespaceId
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: The ID of the `Namespace`.
+      requestBody:
+        description: The parameters containing the `DataType` IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: The `DataType` IDs.
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
   /classes:
     post:
       tags:
@@ -987,22 +1091,22 @@ paths:
       operationId: createClass
       description: Creates a new class.
       security:
-        - JWT: [ ]
+        - JWT: []
       requestBody:
         description: The class object to create.
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Class'
+              $ref: "#/components/schemas/Class"
       responses:
-        '201':
+        "201":
           description: Created successfully
-        '401':
+        "401":
           description: Unauthorized
-        '403':
+        "403":
           description: Forbidden
-        '409':
+        "409":
           description: Conflict
   /classes/{classId}:
     get:
@@ -1012,7 +1116,7 @@ paths:
       operationId: getClassById
       description: Returns a class definition including the class and its properties.
       security:
-        - JWT: [ ]
+        - JWT: []
       parameters:
         - in: path
           name: classId
@@ -1021,17 +1125,17 @@ paths:
             type: integer
           description: The ID of the class.
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Class'
-        '401':
+                $ref: "#/components/schemas/Class"
+        "401":
           description: Unauthorized
-        '403':
+        "403":
           description: Forbidden
-        '404':
+        "404":
           description: Not found
     delete:
       tags:
@@ -1040,7 +1144,7 @@ paths:
       operationId: disableClass
       description: Disables a class.
       security:
-        - JWT: [ ]
+        - JWT: []
       parameters:
         - in: path
           name: classId
@@ -1049,13 +1153,13 @@ paths:
             type: integer
           description: The ID of the class to disable.
       responses:
-        '204':
+        "204":
           description: No content
-        '401':
+        "401":
           description: Unauthorized
-        '403':
+        "403":
           description: Forbidden
-        '404':
+        "404":
           description: Not found
     put:
       tags:
@@ -1064,7 +1168,7 @@ paths:
       operationId: editClass
       description: Makes edits to a `Class`.
       security:
-        - JWT: [ ]
+        - JWT: []
       parameters:
         - in: path
           name: classId
@@ -1073,17 +1177,119 @@ paths:
             type: integer
           description: The ID of the class to enable.
       responses:
-        '200':
+        "200":
           description: OK, returns the `Class` object after editing.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Class'
-        '401':
+                $ref: "#/components/schemas/Class"
+        "401":
           description: Unauthorized
-        '403':
+        "403":
           description: Forbidden
-        '404':
+        "404":
+          description: Not found
+  /data-types:
+    post:
+      tags:
+        - DataTypes
+      summary: Creates a new data type.
+      operationId: createDataType
+      description: Creates a new data type.
+      security:
+        - JWT: []
+      requestBody:
+        description: The data type object to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataType"
+      responses:
+        "201":
+          description: Created successfully
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+  /data-types/{dataTypeId}:
+    get:
+      tags:
+        - DataTypes
+      summary: Returns a data type by ID.
+      operationId: getDataTypeById
+      description: Returns the data type by its ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: dataTypeId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `DataType`.
+      responses:
+        "200":
+          description: A `DataType`.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataType"
+        "401":
+          description: Unauthorized
+    delete:
+      tags:
+        - DataTypes
+      summary: Deletes (disables) a data type.
+      operationId: disableDataType
+      description: Disables a data type.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: dataTypeId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the data type to disable.
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+    put:
+      tags:
+        - DataTypes
+      summary: Edits a data type.
+      operationId: editDataType
+      description: Edits a `DataType`.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: dataTypeId
+          required: true
+          schema:
+            type: integer
+            description: The ID of the `DataType` to edit.
+      responses:
+        "200":
+          description: OK, returns the `DataType` object after editing.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataType"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
           description: Not found
 components:
   securitySchemes:
@@ -1238,7 +1444,7 @@ components:
           description: Alphanumeric common name of the class, cannot start with a number.
           minLength: 3
           maxLength: 80
-          pattern: '^[A-Za-z][A-Za-z0-9]*$'
+          pattern: "^[A-Za-z][A-Za-z0-9]*$"
         description:
           type: string
           description: A short description describing the class.  CommonMark allowed here.
@@ -1250,6 +1456,110 @@ components:
             - disabled
           description: A status of the `Class`.
           default: enabled
+        createDate:
+          type: string
+          format: date-time
+          description: Creation date and time.  Ignored if supplied, handled by the service.
+        updateDate:
+          type: string
+          format: date-time
+          description: Update date and time.  Ignored if supplied, handled by the service.
+        disableDate:
+          type: string
+          format: date-time
+          description: Disabled date and time.  Ignored if supplied, handled by the service.
+    DataType:
+      type: object
+      required:
+        - namespaceId
+        - name
+        - description
+        - dataType
+      description: |
+        `DataType` defines the type of data that can be stored in Objectified.  Anything 
+        defined as an `OBJECT` identifies that it is a complex store.
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The numerical ID of the `DataType`.  (Auto-numbering, ignored on create.)
+        namespaceId:
+          type: integer
+          format: int64
+          description: The numerical ID of the `Namespace` to which this data type belongs.
+        name:
+          type: string
+          description: Alphanumeric common name of the `DataType`, cannot start with a number.
+          minLength: 2
+          maxLength: 80
+          pattern: "^[A-Za-z][A-Za-z0-9]*$"
+        description:
+          type: string
+          description: A short description describing the data type.
+          maxLength: 4096
+        dataType:
+          type: string
+          enum:
+            [
+              STRING,
+              INT32,
+              INT64,
+              FLOAT,
+              DOUBLE,
+              BOOLEAN,
+              DATE,
+              DATE_TIME,
+              URI,
+              BYTE,
+              BINARY,
+              PASSWORD,
+              OBJECT,
+            ]
+        isArray:
+          type: boolean
+          description: Boolean flag indicating if this data type stores an array.
+          default: false
+        maxLength:
+          type: integer
+          format: int32
+          description: |
+            Maximum length of the data that can be stored; does not apply to `OBJECT`,
+            as they are dynamic.
+        pattern:
+          type: string
+          description: A regular expression pattern to apply to the data stored in this type.
+        enumValues:
+          type: array
+          description: |
+            A list of enumeration values that are allowed in this `DataType`.  These 
+            lengths should be equal to the number of entries in `enumDescriptions`.
+          items:
+            type: string
+        enumDescriptions:
+          type: array
+          description: |
+            A list of the descriptions for each of the values in `enumValues`.  These 
+            lengths should be equal to the number of entries in `enumValues`.
+          items:
+            type: string
+        examples:
+          type: array
+          description: An array of examples that can be applied to this `DataType`.
+          items:
+            type: string
+        status:
+          type: string
+          enum:
+            - enabled
+            - disabled
+          description: A status of the `DataType`.
+          default: enabled
+        reserved:
+          type: boolean
+          description: |
+            Indicates whether or not this `DataType` is a core data type, indicating 
+            a type that is available system-wide regardless of `Namespace`.
+          default: false
         createDate:
           type: string
           format: date-time

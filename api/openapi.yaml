@@ -73,10 +73,15 @@ tags:
       for more detailed on best practices regarding `DataType` and `Field` definitions.
   - name: Fields
     description: |
-      `Field`s are storage objects that utilize a `DataType` definition.
+      `Field`s are assignments of logical names to a `DataType` definition.
 
-      `Field`s define the types of data that a class property can contain.  `Field`s
-      can be reused.  `Field`s are not indexed, whereas `Properties` can be.
+      In Object Oriented design, fields define the data that can be stored for a
+      class property.  Property names are unique per `Class`, but the `Field`s that
+      contain the storage definitions can be reused as necessary.
+
+      `Field`s are not indexed because they do not define the names of values that 
+      store the data.  `Properties` can be indexed, because they are unique to each
+      `Class` and may be common between other `Class`es of similar structure.
 
       Please
       [refer to this documentation](https://soon-to-be-created.com)

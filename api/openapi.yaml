@@ -1918,6 +1918,414 @@ paths:
           description: Object property by ID does not exist, or is not an object type
         "409":
           description: Conflict
+  /instances:
+    post:
+      tags:
+        - Instances
+      summary: Creates a new instance.
+      operationId: createInstance
+      description: Creates a new Instance.
+      security:
+        - JWT: []
+      requestBody:
+        description: The `Instance` to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Instance"
+      responses:
+        "201":
+          description: Created successfully
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+  /instances/{instanceId}:
+    get:
+      tags:
+        - Instances
+      summary: Returns the instance by ID.
+      operationId: getInstanceById
+      description: Returns the instance record based on its instance ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: instanceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the instance.
+      responses:
+        "200":
+          description: An instance.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InstanceData"
+        "401":
+          description: Unauthorized
+    delete:
+      tags:
+        - Instances
+      summary: Deletes an instance.
+      operationId: deleteInstance
+      description: Deletes an `Instance`.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: instanceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Instance`.
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+    put:
+      tags:
+        - Instances
+      summary: Edits an instance.
+      operationId: editInstance
+      description: Edits an `Instance`.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: instanceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Instance`.
+      responses:
+        "200":
+          description: OK, returns the `Instance` object after editing.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Instance"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+  /instances/{instanceId}/data:
+    post:
+      tags:
+        - Instances
+      summary: Creates a new instance data record.
+      operationId: createInstanceData
+      description: |
+        Creates a new `InstanceData` record.  If an `InstanceData` record already exists for the `Instance`,
+        a new `InstanceData` record is created, and the version is incremented.
+
+        __NOTE:__ Adding a new data record to an `Instance` that has been deleted will append the record,
+        but will not affect the deletion flag.
+
+        Records that are added to an `Instance` are validated using JSON Schema Validation.  Any validations
+        that fail will return an bad request error (400), and the record will not be created.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: instanceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Instance`.
+      requestBody:
+        description: The instance data object to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InstanceData"
+      responses:
+        "201":
+          description: Created successfully
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+    get:
+      tags:
+        - Instances
+      summary: Returns the latest instance data record for an instance.
+      operationId: getInstanceData
+      description: Returns the latest `InstanceData` record for the `Instance`.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: instanceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Instance`.
+      responses:
+        "200":
+          description: The latest `InstanceData` record.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InstanceData"
+        "401":
+          description: Unauthorized
+    delete:
+      tags:
+        - Instances
+      summary: Deletes an instance.
+      operationId: deleteInstanceData
+      description: Deletes an `InstanceData` record.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: instanceId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Instance`.
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+  /links:
+    post:
+      tags:
+        - Links
+      summary: Creates a new link.
+      operationId: createLink
+      description: Creates a link object that links two classes between each other.
+      security:
+        - JWT: []
+      requestBody:
+        description: The link object to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Link"
+      responses:
+        "201":
+          description: Created successfully
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+  /links/{linkId}:
+    get:
+      tags:
+        - Links
+      summary: Retrieves a link by ID.
+      operationId: getLinkById
+      description: Retrieves a `Link` by ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: linkId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Link` to retrieve.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Link"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+    put:
+      tags:
+        - Links
+      summary: Edits a Link.
+      operationId: editLink
+      description: Edits a `Link`.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: linkId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Link` to retrieve.
+      responses:
+        "200":
+          description: OK, returns the `Link` object after editing.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Link"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+    delete:
+      tags:
+        - Links
+      summary: Deletes a link.
+      operationId: disableLink
+      description: Deletes a `Link`.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: linkId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `Link` to disable.
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+  /links/definition:
+    post:
+      tags:
+        - Links
+      summary: Creates a new link definition.
+      operationId: createLinkDefinition
+      description: Creates a `LinkDef` object that links two classes between each other.
+      security:
+        - JWT: []
+      requestBody:
+        description: The `LinkDef` object to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkDef"
+      responses:
+        "201":
+          description: Created successfully
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+  /links/definition/{linkDefinitionId}:
+    get:
+      tags:
+        - Links
+      summary: Retrieves a link definition by ID.
+      operationId: getLinkDefinitionById
+      description: Retrieves a `LinkDef` by its `LinkDef` ID.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: linkDefinitionId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `LinkDef` to retrieve.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinkDef"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+    put:
+      tags:
+        - Links
+      summary: Edits a Link Definition.
+      operationId: editLink
+      description: Edits a `LinkDef`.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: linkDefinitionId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `LinkDef` to retrieve.
+      responses:
+        "200":
+          description: OK, returns the `LinkDef` object after editing.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinkDef"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+    delete:
+      tags:
+        - Links
+      summary: Deletes a link definition.
+      operationId: deleteLinkDefinition
+      description: Deletes a `LinkDef` and any `Link`s associated with it.
+      security:
+        - JWT: []
+      parameters:
+        - in: path
+          name: linkDefinitionId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the `LinkDef` to delete.
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
 components:
   securitySchemes:
     JWT:
@@ -2325,6 +2733,168 @@ components:
           type: string
           format: date-time
           description: Deletion date and time.  Ignored if supplied, handled by the service.
+    Instance:
+      type: object
+      required:
+        - namespaceId
+        - classId
+        - ownerId
+        - name
+        - description
+      description: |
+        `Instance` stores data that matches the structural definition of a `Class`.  An `Instance` is a record
+        that may contain many instances of `InstanceData` records defining the data as it changes over time.
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The numerical ID of the instance.  (Auto-numbering, ignored on create.)
+        namespaceId:
+          type: integer
+          format: int64
+          description: The numerical ID of the namespace to which this instance belongs.
+        classId:
+          type: integer
+          format: int64
+          description: The numerical ID of the class to which this instance belongs.
+        ownerId:
+          type: integer
+          format: int64
+          description: The numerical ID of the user to which this instance belongs.
+        name:
+          type: string
+          description: Alphanumeric common name of the intsance, cannot start with a number.
+          minLength: 2
+          maxLength: 80
+          pattern: "^[A-Za-z][A-Za-z0-9]*$"
+        description:
+          type: string
+          description: A short description describing the instance.  CommonMark accepted.
+          maxLength: 4096
+        status:
+          type: string
+          enum:
+            - enabled
+            - disabled
+          description: A status of the `Instance`.
+          default: enabled
+        createDate:
+          type: string
+          format: date-time
+          description: Creation date and time.  Ignored if supplied, handled by the service.
+        updateDate:
+          type: string
+          format: date-time
+          description: Update date and time.  Ignored if supplied, handled by the service.
+        disableDate:
+          type: string
+          format: date-time
+          description: Deletion date and time.  Ignored if supplied, handled by the service.
+    InstanceData:
+      type: object
+      required:
+        - instanceId
+        - instanceData
+      description: |
+        `InstanceData` is a record of data associated with an `Instance`.
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The numerical ID of the instance data record.  (Auto-numbering, ignored on create.)
+        instanceId:
+          type: integer
+          format: int64
+          description: The numerical ID of the instance to which this instance belongs.
+        instanceData:
+          type: object
+          description: The dynamic data stored within this record.
+        instanceVersion:
+          type: integer
+          format: int32
+          description: This is the version of the record.
+        date:
+          type: string
+          format: date-time
+          description: Date and time of the data record, which may or may not reflect the creation time.
+    LinkDef:
+      type: object
+      required:
+        - namespaceId
+        - t1
+        - t2
+      description: |
+        `LinkDef` defines a `Link` between two `Class` objects.  It contains a left side (t1) and a right side (t2).
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The numerical ID of the link definition.  (Auto-numbering, ignored on create.)
+        namespaceId:
+          type: integer
+          format: int64
+          description: The numerical ID of the namespace to which this link definition belongs.
+        t1:
+          type: integer
+          format: int64
+          description: The numerical ID of the class on the left side to link from.
+        t2:
+          type: integer
+          format: int64
+          description: The numerical ID of the class on the right side to link to.
+        name:
+          type: string
+          description: Alphanumeric common name of the data type, cannot start with a number.
+          minLength: 2
+          maxLength: 80
+          pattern: "^[A-Za-z][A-Za-z0-9]*$"
+        description:
+          type: string
+          description: A short description describing the data type.  CommonMark accepted.
+          maxLength: 4096
+    Link:
+      type: object
+      required:
+        - linkDefId
+        - name
+        - t1
+        - t2
+      description: |
+        `Link` is a record that relates two `Instance`s between to other with an optional decorator (t3) record.
+        The decorator record is a free-formed `JSON` object that contains information about the data in common.
+        It can be used as a search record to determine why a record may be linked, particularly if there is more
+        than one link record linking the same two objects together.
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The numerical ID of the link.  (Auto-numbering, ignored on create.)
+        linkDefId:
+          type: integer
+          format: int64
+          description: The numerical ID of the link definition to which this link belongs.
+        name:
+          type: string
+          description: Alphanumeric common name of the linked objects, cannot start with a number.
+          minLength: 2
+          maxLength: 80
+          pattern: "^[A-Za-z][A-Za-z0-9]*$"
+        t1:
+          type: integer
+          format: int64
+          description: The left side `Instance` ID to link.
+        t2:
+          type: integer
+          format: int64
+          description: The right side `Instance` ID to link.
+        t3:
+          type: object
+          format: int64
+          description: The link decoration describing the link metadata as a JSON object.
+        createDate:
+          type: string
+          format: date-time
+          description: Creation date and time.  Ignored if supplied, handled by the service.
     ErrorMessage:
       type: object
       required:

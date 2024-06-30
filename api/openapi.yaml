@@ -574,6 +574,10 @@ paths:
           description: Forbidden
         "404":
           description: Not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
   /namespaces:
     get:
       tags:
@@ -680,6 +684,10 @@ paths:
           description: Not found
         "409":
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
     delete:
       tags:
         - Namespaces
@@ -1050,6 +1058,10 @@ paths:
           description: Forbidden
         "409":
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
     delete:
       tags:
         - Namespaces
@@ -1156,6 +1168,10 @@ paths:
           description: Forbidden
         "409":
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
     delete:
       tags:
         - Namespaces
@@ -1260,6 +1276,10 @@ paths:
           description: Forbidden
         "409":
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
     delete:
       tags:
         - Namespaces
@@ -1470,6 +1490,10 @@ paths:
           description: Forbidden
         "409":
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
     delete:
       tags:
         - Classes
@@ -1800,6 +1824,10 @@ paths:
           description: Not found
         "409":
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
     delete:
       tags:
         - Properties
@@ -1887,6 +1915,10 @@ paths:
           description: Object property by ID does not exist, or is not an object type
         "409":
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
     delete:
       tags:
         - Properties
@@ -1923,6 +1955,10 @@ paths:
           description: Object property by ID does not exist, or is not an object type
         "409":
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
   /instances:
     post:
       tags:
@@ -1948,6 +1984,10 @@ paths:
           description: Forbidden
         "409":
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
   /instances/{instanceId}:
     get:
       tags:
@@ -2067,6 +2107,10 @@ paths:
           description: Forbidden
         "409":
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
     get:
       tags:
         - Instances
@@ -2250,6 +2294,10 @@ paths:
           description: Forbidden
         "409":
           description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
   /links/definition/{linkDefinitionId}:
     get:
       tags:

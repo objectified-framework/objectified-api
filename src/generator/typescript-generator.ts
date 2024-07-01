@@ -119,6 +119,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
       // Research 'pattern'
 
       if (schemaProperties[property]['enum']) {
+        // Generate enumeration type, along with mapping of the enumeration definitions.
+        // Enumeration is the "class name + PascalCase Enumeration Property name" with the value being the originally
+        // defined value, since this has to be serialized over the wire.
         dtoData += generateEnumTypeDefinition(schemaProperties[property]['enum']);
         tsType = `${key}${initCap(property)}Enum`;
 
@@ -154,6 +157,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
     dtoBody = dtoHeader;
 
+    // Output each enumeration prior to the definition of the class here.  This generates the names of the
+    // enumeration type names along with the PascalCase names and their respective values.  This makes for
+    // programmatic use of the values, but only writes the enumeration maps if they exist.
     for (const enumType of Object.keys(enumMap)) {
       dtoBody += `export enum ${enumType} {\n`;
 

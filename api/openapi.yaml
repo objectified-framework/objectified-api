@@ -2927,7 +2927,6 @@ components:
           description: The right side `Instance` ID to link.
         t3:
           type: object
-          format: int64
           description: The link decoration describing the link metadata as a JSON object.
         createDate:
           type: string

@@ -21,10 +21,7 @@ export function appendRawApiPropertyValue(propertyName: string, properties: any)
 
 // TODO:
 // Support for '$ref'
-// Support for 'array' types
-// Support for 'date-time' format
 // Research 'pattern'
-// Support for enum
 
 export function generatePropertyTypeDefinition(type: string, array: boolean = false): string {
   const propertyType = type.toLowerCase();

@@ -116,10 +116,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
       // TODO:
       // Support for '$ref'
-      // Support for 'array' types
-      // Support for 'date-time' format
       // Research 'pattern'
-      // Support for enum
 
       if (schemaProperties[property]['enum']) {
         dtoData += generateEnumTypeDefinition(schemaProperties[property]['enum']);

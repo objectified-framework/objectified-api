@@ -1,13 +1,26 @@
 import { OpenAPI } from '@objectified/openapi-parser/dist/schema';
-import {appendRawApiPropertyValue, generatePropertyTypeDefinition, generateTypeScriptTypeDefinition} from './util';
+import {
+  appendRawApiPropertyValue,
+  generateEnumTypeDefinition,
+  generatePropertyTypeDefinition,
+  generateTypeScriptTypeDefinition,
+  initCap,
+  toPascalCase,
+} from './util';
 
 const GENERATED_FILE_HEADER = `/**
  * DO NOT MAKE ANY CHANGES TO THIS FILE, IT IS AUTOMATICALLY GENERATED.
  */`;
 
-const STATIC_OPENAPI_FIELDS = [
-  'default', 'minimum', 'maximum', 'minLength', 'maxLength',
-];
+const STATIC_OPENAPI_FIELDS = ['default', 'minimum', 'maximum', 'minLength', 'maxLength'];
+
+function showHelp() {
+  console.log('Usage: typescript-generator [OpenAPI YAML File] [output-directory] (--dry-run)');
+  console.log('Where <options> are:');
+  console.log('  --dry-run   Will show what the code will do, but will not write it.');
+  console.log('  --help/-h   Will show this help and exit.');
+  process.exit(0);
+}
 
 (async () => {
   const args = process.argv.splice(2);
@@ -16,14 +29,6 @@ const STATIC_OPENAPI_FIELDS = [
   let dryRun = false;
   const yaml = require('yaml');
   const fs = require('fs');
-
-  function showHelp() {
-    console.log('Usage: typescript-generator [OpenAPI YAML File] [output-directory] (--dry-run)');
-    console.log('Where <options> are:');
-    console.log('  --dry-run   Will show what the code will do, but will not write it.');
-    console.log('  --help/-h   Will show this help and exit.');
-    process.exit(0);
-  }
 
   if (args.includes('--help') || args.includes('-h')) {
     showHelp();
@@ -67,7 +72,9 @@ const STATIC_OPENAPI_FIELDS = [
   for (const key of Object.keys(componentSchemas)) {
     const schemaProperties = componentSchemas[key].getSchema()['properties'];
     const outputDtoFilename = `${outputDtoDirectory}/${key}.dto.ts`;
-    let dtoData = `${GENERATED_FILE_HEADER}\n`;
+    let dtoHeader = `${GENERATED_FILE_HEADER}\n`;
+    let dtoData = '';
+    let enumMap = {};
     const classDescription = (
       componentSchemas[key].getSchema()['description'] ?? `Auto-generated DTO class for '${key}' in /components/schemas`
     )
@@ -75,13 +82,9 @@ const STATIC_OPENAPI_FIELDS = [
       .replaceAll('\n', '\n * ');
     const required = componentSchemas[key].getSchema()['required'];
 
-    dtoData += `
+    dtoHeader += `
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-/**
- * ${classDescription}
- */
-export class ${key}Dto {
 `;
 
     // Write export from DTO file generation into the index.
@@ -118,19 +121,26 @@ export class ${key}Dto {
       // Research 'pattern'
       // Support for enum
 
-      if (propertyType === 'array') {
-        // Handle Array here
-        dtoData += generatePropertyTypeDefinition(schemaProperties[property]['items']['type'], true);
-        tsType = generateTypeScriptTypeDefinition(schemaProperties[property]['items']['type']) + '[]';
+      if (schemaProperties[property]['enum']) {
+        dtoData += generateEnumTypeDefinition(schemaProperties[property]['enum']);
+        tsType = `${initCap(property)}Enum`;
+
+        enumMap[tsType] = schemaProperties[property]['enum'];
       } else {
-        dtoData += generatePropertyTypeDefinition(schemaProperties[property]['type']);
-        tsType = generateTypeScriptTypeDefinition(schemaProperties[property]['type']);
+        if (propertyType === 'array') {
+          // Handle Array here
+          dtoData += generatePropertyTypeDefinition(schemaProperties[property]['items']['type'], true);
+          tsType = generateTypeScriptTypeDefinition(schemaProperties[property]['items']['type']) + '[]';
+        } else {
+          dtoData += generatePropertyTypeDefinition(schemaProperties[property]['type']);
+          tsType = generateTypeScriptTypeDefinition(schemaProperties[property]['type']);
+        }
       }
 
       // Handle extra OpenAPI field values for type definitions that are handled by Swagger
       STATIC_OPENAPI_FIELDS.forEach((x) => {
         dtoData += appendRawApiPropertyValue(x, schemaProperties[property]);
-      })
+      });
 
       dtoData += '  })\n';
 
@@ -143,16 +153,37 @@ export class ${key}Dto {
 
     dtoData += '}\n';
 
+    let dtoBody = '';
+
+    dtoBody = dtoHeader;
+
+    for (const enumType of Object.keys(enumMap)) {
+      dtoBody += `export enum ${enumType} {\n`;
+
+      enumMap[enumType].forEach((x: string) => {
+        dtoBody += `  ${toPascalCase(x)} = '${x}',\n`;
+      });
+
+      dtoBody += `};\n\n`;
+    }
+
+    dtoBody += `/**
+ * ${classDescription}
+ */
+export class ${key}Dto {
+`;
+    dtoBody += dtoData;
+
     if (!dryRun) {
       console.log(`  - ${key} -> ${outputDtoFilename}`);
-      fs.writeFileSync(`${outputDtoFilename}`, dtoData);
+      fs.writeFileSync(`${outputDtoFilename}`, dtoBody);
     } else {
       console.log(`... would write ${outputDtoFilename} DTO file`);
     }
   }
 
   if (!dryRun) {
-    console.log('  + Finishing with \'index.ts\'');
+    console.log("  + Finishing with 'index.ts'");
     fs.writeFileSync(`${outputDtoDirectory}/index.ts`, index);
   } else {
     console.log('... finish process with index.ts output');

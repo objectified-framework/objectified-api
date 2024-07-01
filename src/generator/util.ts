@@ -1,3 +1,16 @@
+export function initCap(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function toPascalCase(str: string) {
+  return `${str}`
+    .toLowerCase()
+    .replace(new RegExp(/[-_]+/, 'g'), ' ')
+    .replace(new RegExp(/[^\w\s]/, 'g'), '')
+    .replace(new RegExp(/\s+(.)(\w*)/, 'g'), ($1, $2, $3) => `${$2.toUpperCase() + $3}`)
+    .replace(new RegExp(/\w/), (s) => s.toUpperCase());
+}
+
 export function appendRawApiPropertyValue(propertyName: string, properties: any): string {
   if (properties[propertyName] !== undefined) {
     return `    ${propertyName}: ${JSON.stringify(properties[propertyName])},\n`;
@@ -51,6 +64,12 @@ export function generatePropertyTypeDefinition(type: string, array: boolean = fa
   }
 
   return `    type: ${typeValue},\n`;
+}
+
+export function generateEnumTypeDefinition(enums: any[]): string {
+  const enumValues: string[] = enums.map((x) => `'${x}'`);
+
+  return `    enum: [ ${enumValues.join(', ')} ],\n`;
 }
 
 export function generateTypeScriptTypeDefinition(type: string): string {

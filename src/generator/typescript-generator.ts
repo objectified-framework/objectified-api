@@ -62,6 +62,8 @@ const STATIC_OPENAPI_FIELDS = [
   // Step 1: Create DTO schemas for all objects in #/components/schemas
   console.log(`Generating Data Type Objects in ${outputDtoDirectory} ...`);
 
+  let index = `${GENERATED_FILE_HEADER}\n\n`;
+
   for (const key of Object.keys(componentSchemas)) {
     const schemaProperties = componentSchemas[key].getSchema()['properties'];
     const outputDtoFilename = `${outputDtoDirectory}/${key}.dto.ts`;
@@ -81,6 +83,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
  */
 export class ${key}Dto {
 `;
+
+    // Write export from DTO file generation into the index.
+    index += `export * from './${key}.dto';\n`;
 
     for (const property of Object.keys(schemaProperties)) {
       const requiredProperty = required.includes(property);
@@ -144,5 +149,12 @@ export class ${key}Dto {
     } else {
       console.log(`... would write ${outputDtoFilename} DTO file`);
     }
+  }
+
+  if (!dryRun) {
+    console.log('  + Finishing with \'index.ts\'');
+    fs.writeFileSync(`${outputDtoDirectory}/index.ts`, index);
+  } else {
+    console.log('... finish process with index.ts output');
   }
 })();

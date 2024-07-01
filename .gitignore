@@ -132,3 +132,5 @@ dist
 # npm
 package-lock.json
 yarn.lock
+
+src/generated

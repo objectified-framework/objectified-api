@@ -1,4 +1,5 @@
 import { OpenAPI } from '@objectified/openapi-parser/dist/schema';
+import { appendRawApiPropertyValue } from './util';
 
 const GENERATED_FILE_HEADER = `/**
  * DO NOT MAKE ANY CHANGES TO THIS FILE, IT IS AUTOMATICALLY GENERATED.
@@ -90,7 +91,7 @@ export class ${key}Dto {
       }
 
       if (schemaProperties[property]['description']) {
-        dtoData += `    description: '${schemaProperties[property]['description']}',\n`;
+        dtoData += `    description: '${schemaProperties[property]['description'].replaceAll('\n', ' ')}',\n`;
       }
 
       if (!schemaProperties[property]['type']) {
@@ -142,6 +143,15 @@ export class ${key}Dto {
           tsType = 'any';
           break;
       }
+
+      // Handle default property
+      dtoData += appendRawApiPropertyValue('default', schemaProperties[property]);
+
+      // Handle minimum value
+      dtoData += appendRawApiPropertyValue('minimum', schemaProperties[property]);
+
+      // Handle maximum value
+      dtoData += appendRawApiPropertyValue('maximum', schemaProperties[property]);
 
       dtoData += '  })\n';
 

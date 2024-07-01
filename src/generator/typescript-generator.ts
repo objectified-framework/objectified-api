@@ -120,7 +120,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
       if (schemaProperties[property]['enum']) {
         dtoData += generateEnumTypeDefinition(schemaProperties[property]['enum']);
-        tsType = `${initCap(property)}Enum`;
+        tsType = `${key}${initCap(property)}Enum`;
 
         enumMap[tsType] = schemaProperties[property]['enum'];
       } else {

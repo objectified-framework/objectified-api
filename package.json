@@ -4,10 +4,10 @@
   "description": "OpenAPI Definitions for Objectified API",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "tsc",
+    "build": "rm -rf src/generated ; tsc",
     "lint": "prettier -c src/* api/* --write",
     "test": "jest --coverage",
-    "start": "node dist/typescript-generator.js api/openapi.yaml"
+    "start": "rm -rf src/generated ; node dist/typescript-generator.js api/openapi.yaml src"
   },
   "jest": {
     "transform": {
@@ -17,6 +17,7 @@
   "author": "ksuenobu@fastmail.com",
   "license": "Apache License 2.0",
   "dependencies": {
+    "@nestjs/swagger": "^7.3.1",
     "@objectified/openapi-parser": "/home/kenji/Development/objectified-openapi-parser",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.2",

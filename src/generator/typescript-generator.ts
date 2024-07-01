@@ -116,7 +116,7 @@ export class ${key}Dto {
       if (propertyType === 'array') {
         // Handle Array here
         dtoData += generatePropertyTypeDefinition(schemaProperties[property]['items']['type'], true);
-        tsType = generateTypeScriptTypeDefinition(schemaProperties[property]['items']['type']);
+        tsType = generateTypeScriptTypeDefinition(schemaProperties[property]['items']['type']) + '[]';
       } else {
         dtoData += generatePropertyTypeDefinition(schemaProperties[property]['type']);
         tsType = generateTypeScriptTypeDefinition(schemaProperties[property]['type']);

@@ -1,9 +1,13 @@
 import { OpenAPI } from '@objectified/openapi-parser/dist/schema';
-import { appendRawApiPropertyValue } from './util';
+import {appendRawApiPropertyValue, generatePropertyTypeDefinition, generateTypeScriptTypeDefinition} from './util';
 
 const GENERATED_FILE_HEADER = `/**
  * DO NOT MAKE ANY CHANGES TO THIS FILE, IT IS AUTOMATICALLY GENERATED.
  */`;
+
+const STATIC_OPENAPI_FIELDS = [
+  'default', 'minimum', 'maximum', 'minLength', 'maxLength',
+];
 
 (async () => {
   const args = process.argv.splice(2);
@@ -109,49 +113,19 @@ export class ${key}Dto {
       // Research 'pattern'
       // Support for enum
 
-      switch (propertyType) {
-        case 'integer':
-        case 'number':
-        case 'float':
-        case 'double':
-          dtoData += '    type: Number,\n';
-          tsType = 'number';
-          break;
-
-        case 'boolean':
-          dtoData += '    type: Boolean,\n';
-          tsType = 'boolean';
-          break;
-
-        case 'string':
-          dtoData += '    type: String,\n';
-          tsType = 'string';
-          break;
-
-        case 'object':
-          dtoData += '    type: Object,\n';
-          tsType = 'any';
-          break;
-
-        case 'array':
-          dtoData += '    type: [Array],\n';
-          tsType = 'any[]';
-          break;
-
-        default:
-          dtoData += `    type: Unknown(${schemaProperties[property]['type']}),\n`;
-          tsType = 'any';
-          break;
+      if (propertyType === 'array') {
+        // Handle Array here
+        dtoData += generatePropertyTypeDefinition(schemaProperties[property]['items']['type'], true);
+        tsType = generateTypeScriptTypeDefinition(schemaProperties[property]['items']['type']);
+      } else {
+        dtoData += generatePropertyTypeDefinition(schemaProperties[property]['type']);
+        tsType = generateTypeScriptTypeDefinition(schemaProperties[property]['type']);
       }
 
-      // Handle default property
-      dtoData += appendRawApiPropertyValue('default', schemaProperties[property]);
-
-      // Handle minimum value
-      dtoData += appendRawApiPropertyValue('minimum', schemaProperties[property]);
-
-      // Handle maximum value
-      dtoData += appendRawApiPropertyValue('maximum', schemaProperties[property]);
+      // Handle extra OpenAPI field values for type definitions that are handled by Swagger
+      STATIC_OPENAPI_FIELDS.forEach((x) => {
+        dtoData += appendRawApiPropertyValue(x, schemaProperties[property]);
+      })
 
       dtoData += '  })\n';
 

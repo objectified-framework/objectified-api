@@ -4,7 +4,6 @@ const GENERATED_FILE_HEADER = `/**
  * DO NOT MAKE ANY CHANGES TO THIS FILE, IT IS AUTOMATICALLY GENERATED.
  */`;
 
-
 (async () => {
   const args = process.argv.splice(2);
   const openApiFile = args[0];
@@ -51,7 +50,7 @@ const GENERATED_FILE_HEADER = `/**
 
   if (!dryRun) {
     if (!fs.existsSync(outputDtoDirectory)) {
-      fs.mkdirSync(outputDtoDirectory, {recursive: true});
+      fs.mkdirSync(outputDtoDirectory, { recursive: true });
     }
   }
 
@@ -62,8 +61,11 @@ const GENERATED_FILE_HEADER = `/**
     const schemaProperties = componentSchemas[key].getSchema()['properties'];
     const outputDtoFilename = `${outputDtoDirectory}/${key}.dto.ts`;
     let dtoData = `${GENERATED_FILE_HEADER}\n`;
-    const classDescription = (componentSchemas[key].getSchema()['description'] ?? `Auto-generated DTO class for '${key}' in /components/schemas`)
-      .trim().replaceAll('\n', '\n * ');
+    const classDescription = (
+      componentSchemas[key].getSchema()['description'] ?? `Auto-generated DTO class for '${key}' in /components/schemas`
+    )
+      .trim()
+      .replaceAll('\n', '\n * ');
     const required = componentSchemas[key].getSchema()['required'];
 
     dtoData += `
@@ -75,7 +77,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 export class ${key}Dto {
 `;
 
-    for(const property of Object.keys(schemaProperties)) {
+    for (const property of Object.keys(schemaProperties)) {
       const requiredProperty = required.includes(property);
       const stringifiedProperty = JSON.stringify(schemaProperties[property], null, 2).replaceAll('\n', '\n   * ');
 
@@ -106,7 +108,7 @@ export class ${key}Dto {
       // Research 'pattern'
       // Support for enum
 
-      switch(propertyType) {
+      switch (propertyType) {
         case 'integer':
         case 'number':
         case 'float':

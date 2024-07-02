@@ -7,7 +7,7 @@
     "build": "rm -rf src/generated ; tsc",
     "lint": "prettier -c src/* api/* --write",
     "test": "jest --coverage",
-    "start": "rm -rf src/generated ; node dist/typescript-generator.js api/openapi.yaml src"
+    "start": "rm -rf src/generated ; node dist/openapi-generator.js api/openapi.yaml src"
   },
   "jest": {
     "transform": {

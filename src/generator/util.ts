@@ -1,3 +1,7 @@
+export const GENERATED_FILE_HEADER: string = `/**
+ * DO NOT MAKE ANY CHANGES TO THIS FILE, IT IS AUTOMATICALLY GENERATED.
+ */`;
+
 export function initCap(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }

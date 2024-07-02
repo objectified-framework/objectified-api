@@ -2,7 +2,7 @@
  * This generator generates DTO files for NestJS Swagger.
  */
 
-import { GENERATED_FILE_HEADER } from './typescript-generator';
+import { GENERATED_FILE_HEADER } from './util';
 import {
   appendRawApiPropertyValue,
   generateEnumTypeDefinition,

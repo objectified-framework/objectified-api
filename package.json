@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rm -rf dist cfx",
     "lint": "npx @redocly/cli lint api/openapi.yaml",
-    "build": "npm run clean && tsc && mkdir dist/.bin && cp gen.yaml LICENSE dist && cp ~/.npmrc dist && cp bin/gen.sh dist/.bin ",
+    "build": "npm run clean && tsc && mkdir dist/.bin && cp gen.yaml LICENSE dist && cp bin/gen.sh dist/.bin ",
     "counterfact": "rm -rf cfx && counterfact api/openapi.yaml cfx -g && counterfact api/openapi.yaml cfx -p 8080 api/openapi.yaml --swagger -s",
     "release": "npm run build && npm publish",
     "test": "jest"
@@ -35,9 +35,6 @@
     "bin",
     "dist"
   ],
-  "publishConfig": {
-    "@objectified-framework:registry": "https://gitlab.com/api/v4/groups/98289492/-/packages/npm"
-  },
   "devDependencies": {
     "@babel/preset-env": "^7.24.8",
     "@babel/preset-typescript": "^7.24.7",

@@ -5,7 +5,6 @@
  * compatible for use with NestJS and React applications.  These DTO objects are decorated with
  * annotations from the NestJS Swagger library.
  */
-import {Option} from "commander";
 
 const GENERATORS = ['nestjs', 'python'];
 const DTO_DIRECTORY: string = 'src/generated/dto';

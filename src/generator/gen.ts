@@ -10,6 +10,9 @@ import {Option} from "commander";
 const GENERATORS = ['nestjs', 'python'];
 const DTO_DIRECTORY: string = 'src/generated/dto';
 const DAO_DIRECTORY: string = 'src/generated/dao';
+const CONTROLLER_DIRECTORY: string = 'src/generated/controllers';
+const SERVICES_DIRECTORY: string = 'src/generated/services';
+const UTILS_DIRECTORY: string = 'src/generated/util';
 
 import * as fs from 'fs';
 import * as yaml from 'yaml';
@@ -26,6 +29,9 @@ import * as yaml from 'yaml';
     .addOption(new Option('-g <generator>', 'output generator to use').choices(GENERATORS))
     .option('--dto <directory>', 'output directory for generated DTOs', DTO_DIRECTORY)
     .option('--dao <directory>', 'output directory for generated DAOs', DAO_DIRECTORY)
+    .option('--controller <directory>', 'output directory for generated controllers', CONTROLLER_DIRECTORY)
+    .option('--services <directory>', 'output directory for generated services', SERVICES_DIRECTORY)
+    .option('--utils <directory>', 'output directory for generated utils', UTILS_DIRECTORY)
     .parse();
 
   if (!fs.existsSync(program.args[0])) {
@@ -43,9 +49,9 @@ import * as yaml from 'yaml';
 
   generator.generateDaos(program.opts().dao, openapi);
   generator.generateDtos(program.opts().dto, openapi);
-  // generator.generateControllers(program.opts().out, openapi);
-  // generator.generateServices(program.opts().out, openapi);
+  generator.generateControllers(program.opts().controller, openapi);
+  generator.generateServices(program.opts().services, openapi);
   // generator.generateTests(program.opts().out, openapi);
-  // generator.generateSecuritySchemes(program.opts().out, openapi);
+  generator.generateSecuritySchemes(program.opts().utils, openapi);
 
 })();

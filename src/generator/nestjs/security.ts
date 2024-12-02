@@ -2,12 +2,13 @@ import { faker } from '@faker-js/faker';
 
 const HEADER: string = `/**\n * This utility security scheme file is automatically generated.\n * Do not modify this file, any changes will be overwritten.\n *\n * Generated ${new Date()}\n */\n\n`;
 
-export function generateSecuritySchemes(directory: string, schema: any) {
-  const utilDirectory: string = `${directory}/util`;
+export function generateSecuritySchemes(utilDirectory: string, schema: any) {
   const fs = require('fs');
   const schemes = schema.components.securitySchemes;
 
   fs.mkdirSync(utilDirectory, { recursive: true });
+
+  console.log(`Generating NestJS utilities to ${utilDirectory}:`);
 
   for (const [schemeName, schemeData] of Object.entries(schemes)) {
     generateSecurity(utilDirectory, schemeName, schemeData);

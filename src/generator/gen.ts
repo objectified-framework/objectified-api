@@ -19,6 +19,8 @@ import * as yaml from 'yaml';
   const { Command, Option } = require('commander');
   const program = new Command();
 
+  console.log(`Code Auto-Generator: ${version}`);
+
   program
     .argument('<filename>', 'OpenAPI Input Specification')
     .addOption(new Option('-g <generator>', 'output generator to use').choices(GENERATORS))
@@ -34,8 +36,6 @@ import * as yaml from 'yaml';
 
   const fileData = fs.readFileSync(program.args[0], 'utf8');
   const openapi = yaml.parse(fileData);
-
-  console.log(`Code Auto-Generator: ${version}`);
 
   fs.rmSync(DTO_DIRECTORY, { recursive: true, force: true });
 

@@ -1,0 +1,6 @@
+{
+  "preset": "ts-jest",
+  "coverageDirectory": "coverage",
+  "collectCoverage": true,
+  "testMatch": ["**/*.test.ts"]
+}

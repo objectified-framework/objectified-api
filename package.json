@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "description": "Objectified OpenAPI Toolset",
   "scripts": {
-    "clean": "rm -rf dist cfx",
+    "clean": "rm -rf dist cfx src/generated",
     "lint": "npx @redocly/cli lint api/openapi.yaml",
     "build": "npm run clean && tsc && mkdir dist/.bin && cp gen.yaml LICENSE dist && cp bin/gen.sh dist/.bin ",
     "counterfact": "rm -rf cfx && counterfact api/openapi.yaml cfx -g && counterfact api/openapi.yaml cfx -p 8080 api/openapi.yaml --swagger -s",

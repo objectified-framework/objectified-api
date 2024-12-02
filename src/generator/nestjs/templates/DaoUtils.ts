@@ -92,6 +92,15 @@ export class DaoUtils {
 }
 
 /**
+ * Capitalization of word.
+ *
+ * @param str Converts word to capitalized word.
+ */
+export function initCap(str: string): string {
+  return str.charAt(0).toUpperCase() + str.substring(1);
+}
+
+/**
  * Converts a string to camel case.
  *
  * @param str String to convert.
@@ -104,4 +113,30 @@ export function toCamelCase(str: string): string {
       .join('');
 
   return s.slice(0, 1).toLowerCase() + s.slice(1);
+}
+
+/**
+ * Converts a string to kebab-case.
+ *
+ * @param str String to convert
+ * @returns `string` in kebab-case.
+ */
+export function toKebabCase(str: string): string {
+  return str
+    .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+    .map(x => x.toLowerCase())
+    .join('-');
+}
+
+/**
+ * Converts a string to PascalCase.
+ *
+ * @param str String to convert.
+ * @returns The PascalCased string.
+ */
+export function toPascalCase(str: string): string {
+  return str
+    .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+    .map(x => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase())
+    .join('');
 }

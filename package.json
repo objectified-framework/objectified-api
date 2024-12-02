@@ -1,6 +1,6 @@
 {
   "name": "@objectified-framework/objectified-api",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Objectified OpenAPI Toolset",
   "scripts": {
     "clean": "rm -rf dist cfx src/generated",

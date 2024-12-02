@@ -51,7 +51,6 @@ import * as yaml from 'yaml';
   generator.generateDtos(program.opts().dto, openapi);
   generator.generateControllers(program.opts().controller, openapi);
   generator.generateServices(program.opts().services, openapi);
-  // generator.generateTests(program.opts().out, openapi);
   generator.generateSecuritySchemes(program.opts().utils, openapi);
 
 })();

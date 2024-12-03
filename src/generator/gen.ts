@@ -6,7 +6,7 @@
  * annotations from the NestJS Swagger library.
  */
 
-const GENERATORS = ['nestjs', 'python'];
+const GENERATORS = ['nestjs'];
 const DTO_DIRECTORY: string = 'src/generated/dto';
 const DAO_DIRECTORY: string = 'src/generated/dao';
 const CONTROLLER_DIRECTORY: string = 'src/generated/controllers';

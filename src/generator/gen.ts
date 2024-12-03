@@ -31,6 +31,11 @@ import * as yaml from 'yaml';
     .option('--controller <directory>', 'output directory for generated controllers', CONTROLLER_DIRECTORY)
     .option('--services <directory>', 'output directory for generated services', SERVICES_DIRECTORY)
     .option('--utils <directory>', 'output directory for generated utils', UTILS_DIRECTORY)
+    .option('--skip-dto', 'skip generation of DTOs')
+    .option('--skip-dao', 'skip generation of DAOs')
+    .option('--skip-controller', 'skip generation of controllers')
+    .option('--skip-services', 'skip generation of services')
+    .option('--skip-utils', 'skip generation of utils')
     .parse();
 
   if (!fs.existsSync(program.args[0])) {
@@ -46,10 +51,23 @@ import * as yaml from 'yaml';
 
   const generator = require(`./${program.opts().g}`);
 
-  generator.generateDaos(program.opts().dao, openapi);
-  generator.generateDtos(program.opts().dto, openapi);
-  generator.generateControllers(program.opts().controller, openapi);
-  generator.generateServices(program.opts().services, openapi);
-  generator.generateSecuritySchemes(program.opts().utils, openapi);
+  if (!program.opts().skipDao) {
+    generator.generateDaos(program.opts().dao, openapi);
+  }
 
+  if (!program.opts().skipDto) {
+    generator.generateDtos(program.opts().dto, openapi);
+  }
+
+  if (!program.opts().skipController) {
+    generator.generateControllers(program.opts().controller, openapi);
+  }
+
+  if (!program.opts().skipServices) {
+    generator.generateServices(program.opts().services, openapi);
+  }
+
+  if (!program.opts().skipUtils) {
+    generator.generateSecuritySchemes(program.opts().utils, openapi);
+  }
 })();

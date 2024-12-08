@@ -10,6 +10,7 @@ const GENERATORS = ['nestjs'];
 const DTO_DIRECTORY: string = 'src/generated/dto';
 const DAO_DIRECTORY: string = 'src/generated/dao';
 const CONTROLLER_DIRECTORY: string = 'src/generated/controllers';
+const CLIENT_DIRECTORY: string = 'src/generated/clients';
 const SERVICES_DIRECTORY: string = 'src/generated/services';
 const UTILS_DIRECTORY: string = 'src/generated/util';
 
@@ -28,12 +29,14 @@ import * as yaml from 'yaml';
     .addOption(new Option('-g <generator>', 'output generator to use').choices(GENERATORS))
     .option('--dto <directory>', 'output directory for generated DTOs', DTO_DIRECTORY)
     .option('--dao <directory>', 'output directory for generated DAOs', DAO_DIRECTORY)
-    .option('--controller <directory>', 'output directory for generated controllers', CONTROLLER_DIRECTORY)
+    .option('--controllers <directory>', 'output directory for generated controllers', CONTROLLER_DIRECTORY)
+    .option('--clients <directory>', 'output directory for generated clients', CLIENT_DIRECTORY)
     .option('--services <directory>', 'output directory for generated services', SERVICES_DIRECTORY)
     .option('--utils <directory>', 'output directory for generated utils', UTILS_DIRECTORY)
     .option('--skip-dto', 'skip generation of DTOs')
     .option('--skip-dao', 'skip generation of DAOs')
     .option('--skip-controller', 'skip generation of controllers')
+    .option('--skip-clients', 'skip generation of clients')
     .option('--skip-services', 'skip generation of services')
     .option('--skip-utils', 'skip generation of utils')
     .parse();
@@ -60,7 +63,11 @@ import * as yaml from 'yaml';
   }
 
   if (!program.opts().skipController) {
-    generator.generateControllers(program.opts().controller, openapi);
+    generator.generateControllers(program.opts().controllers, openapi);
+  }
+
+  if (!program.opts().skipClients) {
+    generator.generateClients(program.opts().clients, openapi);
   }
 
   if (!program.opts().skipServices) {

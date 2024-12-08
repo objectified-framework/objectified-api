@@ -26,7 +26,7 @@ export class BaseDao<T> {
    */
   public async getAll(): Promise<void | T[]> {
     const db = DaoUtils.getDatabase();
-    const sql = 'SELECT * FROM ' + this.tableName;
+    const sql = `SELECT * FROM ${this.tableName}`;
 
     return (await db.any(sql))
       .map(x => DaoUtils.normalize<T>(x));
@@ -39,10 +39,10 @@ export class BaseDao<T> {
    */
   public async getById(id: number): Promise<void | T> {
     const db = DaoUtils.getDatabase();
-    const sql = 'SELECT * FROM ' + this.tableName + ' WHERE id=$[id]';
+    const sql = `SELECT * FROM ${this.tableName} WHERE id=$[id]`;
 
     return db.oneOrNone(sql, { id })
-      .then((data) => DaoUtils.normalize(data));
+      .then((data: any) => DaoUtils.normalize(data));
   }
 
   /**
@@ -56,7 +56,7 @@ export class BaseDao<T> {
     const sql = DaoUtils.generateInsertSql(this.tableName, data);
 
     return db.one(sql, data)
-      .then((data) => DaoUtils.normalize(data));
+      .then((data: any) => DaoUtils.normalize(data));
   }
 
   /**
@@ -66,7 +66,7 @@ export class BaseDao<T> {
    */
   public async deleteById(id: number): Promise<void> {
     const db = DaoUtils.getDatabase();
-    const sql = 'DELETE FROM ' + this.tableName + ' WHERE id=$[id]';
+    const sql = `DELETE FROM ${this.tableName} WHERE id=$[id]`;
 
     return db.none(sql, { id });
   }
@@ -86,7 +86,7 @@ export class BaseDao<T> {
       ...data,
       id,
     })
-      .then((data) => DaoUtils.normalize(data));
+      .then((data: any) => DaoUtils.normalize(data));
   }
 
   /**
@@ -100,6 +100,6 @@ export class BaseDao<T> {
     const sql = DaoUtils.generateSelectSql(this.tableName, where) + " LIMIT 1";
 
     return db.oneOrNone(sql, where)
-      .then((data) => DaoUtils.normalize(data));
+      .then((data: any) => DaoUtils.normalize(data));
   }
 }

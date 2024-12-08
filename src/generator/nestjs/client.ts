@@ -52,6 +52,14 @@ export function generateClients(clientDirectory: string, openApi: any) {
   console.log(`  + Wrote ${indexFilename}`);
 }
 
+/**
+ * Generates the code required for Client access.
+ *
+ * @param directory The directory to output files to.
+ * @param name The name of the current client being generated from the path name list.
+ * @param description The description for the client from the path.
+ * @param paths The path definitions.
+ */
 function generateClient(directory: string, name: string, description: string, paths: any[]) {
   const fs = require('fs');
   const serviceFile = `${directory}/${name}.client.ts`;
@@ -64,51 +72,17 @@ function generateClient(directory: string, name: string, description: string, pa
 
   for (const pathEntry of paths) {
     const { path, method } = pathEntry;
-  //   const { operationId, description, summary, parameters, requestBody, responses } = pathEntry.data;
     const { operationId, description, responses, parameters, requestBody, } = pathEntry.data;
     const requestBodyContent = requestBody?.content['application/json'];
     const inputs = [];
     const inputVariables = [];
     const inputVariableNames: string[] = [];
     const alteredPath = path.replaceAll('{', '${');
-  //   let returnType = null;
 
-    serviceClassBody += '/**\n';
-    serviceClassBody += ` * ${description.trim().replaceAll('\n', '\n   * ')}\n`;
-    serviceClassBody += ' *\n';
-
-  //   for (const [ responseCode, responseData ] of Object.entries(responses)) {
-  //     const responseDescription = responseData['description'] ?? '';
-  //
-  //     if (responseData['content']) {
-  //       const content = responseData['content'];
-  //       const contentCode = parseInt(responseCode);
-  //       const contentTypes = Object.keys(content);
-  //
-  //       if (contentCode >= 200 && contentCode <= 299) {
-  //         const contentSchema = content[contentTypes[0]].schema;
-  //         const contentSchemaType = propertyToType(contentSchema);
-  //
-  //         if (contentTypes.length > 1) {
-  //           throw new Error(`Path ${path}, method ${method}, return code ${contentCode} has more than one content type for operation ${operationId}`);
-  //         }
-  //
-  //         if (returnType) {
-  //           returnType += ` | ${contentSchemaType}`;
-  //         } else {
-  //           returnType = contentSchemaType;
-  //         }
-  //
-  //         if (contentSchemaType.endsWith('Dto')) {
-  //           serviceDtoImports[contentSchemaType] = 1;
-  //         } else if (contentSchemaType.indexOf('[')) {
-  //           if (contentSchemaType.substring(0, contentSchemaType.indexOf('[')).endsWith('Dto')) {
-  //             serviceDtoImports[contentSchemaType.substring(0, contentSchemaType.indexOf('['))] = 1;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
+    serviceClassBody += `/**
+ * ${description.trim().replaceAll('\n', '\n   * ')}
+ *
+`;
 
     for (const [ responseCode, responseData ] of Object.entries(responses)) {
       const responseDescription = responseData['description'] ?? '';
@@ -166,36 +140,36 @@ function generateClient(directory: string, name: string, description: string, pa
 
     inputVariables.push('headers?: any')
 
-    const modifiedPath = path.replaceAll('{', '${');
-
-    serviceClassBody += ' * @param headers Any optional additional headers to send along with the request\n';
-    serviceClassBody += ' */\n';
-    serviceClassBody += `export const ${initCap(name)}${initCap(operationId)} = async (${inputVariables.join(', ')},) => {\n`;
-
-    serviceClassBody += `  console.log(\`Requesting ${path}\`);\n\n`;
-    serviceClassBody += '  const config = {\n';
-    serviceClassBody += '    headers: {\n';
-    serviceClassBody += '      ...headers,\n';
-    serviceClassBody += '      \'Content-Type\': \'application/json\',\n';
-    serviceClassBody += '    },\n';
-    serviceClassBody += '  };\n';
-
+    serviceClassBody += ` * @param headers Any optional additional headers to send along with the request
+ */
+export const ${initCap(name)}${initCap(operationId)} = async (${inputVariables.join(', ')},) => {
+  console.log(\`Requesting ${path}\`);
+  
+  const config = {
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json',
+    },
+  };
+`;
     if (method.toLowerCase() !== 'get' && method.toLowerCase() !== 'delete') {
       serviceClassBody += `  const postData = {\n`;
       serviceClassBody += inputVariableNames.map((x) => `    ${x}`).join(',\n');
       serviceClassBody += `,\n  };\n\n`;
 
-      serviceClassBody += `  return axios.${method}(\`${modifiedPath}\`, postData, config)\n`;
+      serviceClassBody += `  return axios.${method}(\`${alteredPath}\`, postData, config)\n`;
     } else {
-      serviceClassBody += `\n  return axios.${method}(\`${modifiedPath}\`, config)\n`;
+      serviceClassBody += `\n  return axios.${method}(\`${alteredPath}\`, config)\n`;
     }
 
-    serviceClassBody += '    .then((x) => x.data)\n';
-    serviceClassBody += '    .catch((x) => {\n';
-    serviceClassBody += '      console.error(\'Request failed\', x);\n';
-    serviceClassBody += '      return Promise.reject(x);\n';
-    serviceClassBody += '    });\n';
-    serviceClassBody += '};\n\n';
+    serviceClassBody += `    .then((x) => x.data)
+    .catch((x) => {
+      console.error(\'Request failed\', x);
+      return Promise.reject(x);
+    });
+};
+
+`;
   }
 
   if (Object.keys(serviceDtoImports).length > 0) {

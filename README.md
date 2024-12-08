@@ -2,7 +2,7 @@
 
 This is the data project that accompanies Objectified.
 
-It contains the OpenAPI 3.1 specification for the application, along with the database
+It contains the OpenAPI 3.1.x specification for the application, along with the database
 definition for the DAO/DTO layer.
 
 ## Building the application

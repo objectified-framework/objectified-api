@@ -187,7 +187,7 @@ function generateClient(directory: string, name: string, description: string, pa
 
       serviceClassBody += `  return axios.${method}(\`${modifiedPath}\`, postData, config)\n`;
     } else {
-      serviceClassBody += `  return axios.${method}(\`${modifiedPath}\`, config)\n`;
+      serviceClassBody += `\n  return axios.${method}(\`${modifiedPath}\`, config)\n`;
     }
 
     serviceClassBody += '    .then((x) => x.data)\n';

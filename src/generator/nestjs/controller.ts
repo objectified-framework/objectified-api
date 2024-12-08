@@ -11,10 +11,10 @@ export function generateControllers(controllerDirectory: string, openApi: any) {
 
   console.log(`Generating NestJS Controllers to ${controllerDirectory}:`);
 
-  for (const tag of openApi.tags) {
+  openApi.tags.forEach((tag: any) => {
     tags[tag.name] = tag;
     tags[tag.name].paths = [];
-  }
+  });
 
   // Step 1: prepare a list of all paths associated with a tag.
   for (const path of Object.keys(paths)) {
@@ -59,10 +59,11 @@ function generateController(directory: string, name: string, description: string
 
   controllerBody += HEADER;
 
-  controllerBody += 'import { Controller, Get, Delete, Post, Patch, Put, Options, Body, Param, Res, Req } from \'@nestjs/common\';\n';
-  controllerBody += 'import { ApiResponse, ApiOperation, ApiBody, ApiTags } from \'@nestjs/swagger\';\n';
-  controllerBody += `import { ${name}ServiceImpl } from '../../services';\n`;
-  controllerBody += 'import { Request, Response } from \'express\';\n';
+  controllerBody += `import { Controller, Get, Delete, Post, Patch, Put, Options, Body, Param, Res, Req } from \'@nestjs/common\';
+import { ApiResponse, ApiOperation, ApiBody, ApiTags } from \'@nestjs/swagger\';
+import { ${name}ServiceImpl } from '../../services';
+import { Request, Response } from \'express\';
+`;
 
   for (const pathEntry of paths) {
     const { path, method } = pathEntry;
@@ -206,35 +207,42 @@ function generateController(directory: string, name: string, description: string
     functionComment += '   * @param request The request object\n';
     functionComment += '   * @param response The response object\n';
 
-    functionBody += `  public async ${operationId}(@Req() request: Request, @Res() response: Response, ${inputs.join(', ')}): Promise<void> {\n`;
-    functionBody += `    const result = await this.service.${operationId}(request, ${inputVariables.join(', ')});\n\n`;
-    functionBody += '    response.status(result.statusCode).contentType(result.returnContentType);\n\n';
+    functionBody += `  public async ${operationId}(@Req() request: Request, @Res() response: Response, ${inputs.join(', ')}): Promise<void> {
+    const result = await this.service.${operationId}(request, ${inputVariables.join(', ')});
+    
+    response.status(result.statusCode).contentType(result.returnContentType);
+    
+`;
 
     for(const sec of security) {
       const secType = Object.keys(sec)[0];
 
-      functionBody += `    if (!request.headers.authorization || !${secType}.validate(request)) {\n`;
-      functionBody += '      response.contentType(\'text/plain\').status(401).send(\'Unauthorized\');\n';
-      functionBody += '      return;\n';
-      functionBody += '    }\n\n';
+      functionBody += `    if (!request.headers.authorization || !${secType}.validate(request)) {
+      response.contentType(\'text/plain\').status(401).send(\'Unauthorized\');
+      return;
+    }
+    
+`;
     }
 
-    functionBody += '    if (result.additionalCookies) {\n';
-    functionBody += '      for (const [cookie, value] of Object.entries(result.additionalCookies)) {\n';
-    functionBody += '        response.cookie(cookie, value);\n';
-    functionBody += '      }\n';
-    functionBody += '    }\n\n';
-    functionBody += '    if (result.statusMessage) {\n';
-    functionBody += '      response.send((result.returnContentType.includes(\'json\') ? JSON.stringify(result.statusMessage) : result.statusMessage));\n';
-    functionBody += '    } else {\n';
-    functionBody += '      if (result.returnValue) {\n';
-    functionBody += '        response.send((result.returnContentType.includes(\'json\') ? JSON.stringify(result.returnValue) : result.returnValue));\n';
-    functionBody += '      } else {\n';
-    functionBody += '        response.send();\n';
-    functionBody += '      }\n';
-    functionBody += '    }\n';
-    functionBody += '  }\n\n';
-
+    functionBody += `    if (result.additionalCookies) {
+      for (const [cookie, value] of Object.entries(result.additionalCookies)) {
+        response.cookie(cookie, value);
+      }
+    }
+    
+    if (result.statusMessage) {
+      response.send((result.returnContentType.includes(\'json\') ? JSON.stringify(result.statusMessage) : result.statusMessage));
+    } else {
+      if (result.returnValue) {
+        response.send((result.returnContentType.includes(\'json\') ? JSON.stringify(result.returnValue) : result.returnValue));
+      } else {
+        response.send();
+      }
+    }
+  }
+  
+`;
     functionComment += '   */\n';
 
     controllerClassBody += functionComment + functionBody;
@@ -248,12 +256,17 @@ function generateController(directory: string, name: string, description: string
     controllerBody += `import * as ${x} from '../util/${x}';\n`;
   });
 
-  controllerBody += '\n';
-  controllerBody += `/**\n * ${description.trim().replaceAll('\n', '\n * ')}\n */\n`;
-  controllerBody += `@ApiTags('${toKebabCase(name)}')\n`;
-  controllerBody += `@Controller('${toKebabCase(name)}')\n`;
-  controllerBody += `export class ${name}Controller {\n\n`;
-  controllerBody += `  constructor(private readonly service: ${name}ServiceImpl) { }\n\n`;
+  controllerBody += `
+/**
+ * ${description.trim().replaceAll('\n', '\n * ')}
+ */
+@ApiTags('${toKebabCase(name)}')
+@Controller('${toKebabCase(name)}')
+export class ${name}Controller {
+
+  constructor(private readonly service: ${name}ServiceImpl) { }
+  
+`;
   controllerBody += controllerClassBody;
   controllerBody += '}\n';
 

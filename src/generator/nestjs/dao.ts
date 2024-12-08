@@ -26,14 +26,20 @@ export function generateDaos(daoDirectory: string, openapi: any) {
 
     // Add header to the class definition
     daoBody += daoHeader;
-    daoBody += `import { ${dao}Dto } from "../dto";\n`;
-    daoBody += 'import { BaseDao } from "./BaseDao";\n\n';
-    daoBody += `/**\n * ${dao} Data Access Object\n *\n * ${description}\n */\n`;
-    daoBody += `export class ${daoName} extends BaseDao<${dao}Dto> {\n`;
-    daoBody += '  constructor() {\n';
-    daoBody += `    super('${(daoSchema ? daoSchema + '.' : '')}${pascalToSnake(initLower(dao))}');\n`;
-    daoBody += '  }\n';
-    daoBody += '}\n';
+    daoBody += `import { ${dao}Dto } from "../dto";
+import { BaseDao } from "./BaseDao";
+
+/**
+ * ${dao} Data Access Object
+ *
+ * ${description}
+ */
+export class ${daoName} extends BaseDao<${dao}Dto> {
+  constructor() {
+    super('${(daoSchema ? daoSchema + '.' : '')}${pascalToSnake(initLower(dao))}');
+  }
+}
+`;
 
     fs.writeFileSync(daoFilename, daoBody, 'utf8');
     console.log(`  - Wrote ${daoFilename}`);

@@ -41,46 +41,51 @@ export function generateServices(serviceDirectory: string, openApi: any) {
   let indexBody = HEADER;
   const indexFilename = `${serviceDirectory}/index.ts`;
 
-  indexBody += '/**\n';
-  indexBody += ' * This type is used to describe the response of a service call.\n';
-  indexBody += ' *\n';
-  indexBody += ' * The return steps are as follows:\n';
-  indexBody += ' * - If a status message is present, it will be returned, regardless of the status code.\n';
-  indexBody += ' * - If a return value is present, it will be returned, regardless of the status code, or no content will be returned if not set.\n';
-  indexBody += ' *\n';
-  indexBody += ' * @param T This is the type of object that is returned when the service call is successful.\n';
-  indexBody += ' * @param returnContentType This is the contentType of the return value, or status message - if present.\n';
-  indexBody += ' * @param statusCode The status code of the response to return.\n';
-  indexBody += ' * @param statusMessage If set, this will be returned in JSON.stringify format, and it will be treated as a return value on a failure.\n';
-  indexBody += ' */\n';
-  indexBody += 'export type ServiceResponse<T> = {\n';
-  indexBody += '  returnValue: T,\n';
-  indexBody += '  returnContentType: string,\n';
-  indexBody += '  statusCode: number,\n';
-  indexBody += '  statusMessage?: any,\n';
-  indexBody += '  additionalCookies?: { [key: string]: string },\n';
-  indexBody += '}\n\n';
-  indexBody += 'export const ResponseOk = (val: any) => {\n';
-  indexBody += '  return {'
-  indexBody += '    returnValue: val,\n';
-  indexBody += '    returnContentType: \'application/json\',\n';
-  indexBody += '    statusCode: 200,\n';
-  indexBody += '  };\n';
-  indexBody += '}\n\n';
-  indexBody += 'export const ResponseNoContent = () => {\n';
-  indexBody += '  return {\n';
-  indexBody += '    returnValue: null,\n';
-  indexBody += '    returnContentType: \'application/json\',\n';
-  indexBody += '    statusCode: 201,\n';
-  indexBody += '  };\n';
-  indexBody += '}\n\n';
-  indexBody += 'export const ResponseCreated = (val: any | null = null) => {\n';
-  indexBody += '  return {\n';
-  indexBody += '    returnValue: val,\n';
-  indexBody += '    returnContentType: \'application/json\',\n';
-  indexBody += '    statusCode: 204,\n';
-  indexBody += '  };\n';
-  indexBody += '}\n\n';
+  indexBody += `/**
+ * This type is used to describe the response of a service call.
+ *
+ * The return steps are as follows:
+ * - If a status message is present, it will be returned, regardless of the status code.
+ * - If a return value is present, it will be returned, regardless of the status code, or no content will be returned if not set.
+ *
+ * @param T This is the type of object that is returned when the service call is successful.
+ * @param returnContentType This is the contentType of the return value, or status message - if present.
+ * @param statusCode The status code of the response to return.
+ * @param statusMessage If set, this will be returned in JSON.stringify format, and it will be treated as a return value on a failure.
+ */
+export type ServiceResponse<T> = {
+  returnValue: T,
+  returnContentType: string,
+  statusCode: number,
+  statusMessage?: any,
+  additionalCookies?: { [key: string]: string },
+}
+
+export const ResponseOk = (val: any) => {
+  return {
+    returnValue: val,
+    returnContentType: 'application/json',
+    statusCode: 200,
+  };
+}
+
+export const ResponseNoContent = () => {
+  return {
+    returnValue: null,
+    returnContentType: 'application/json',
+    statusCode: 201,
+  };
+}
+
+export const ResponseCreated = (val: any | null = null) => {
+  return {
+    returnValue: val,
+    returnContentType: 'application/json',
+    statusCode: 204,
+  };
+}
+
+`;
 
   for(const tag of Object.keys(tags)) {
     indexBody += `export * from './${tag}.service';\n`;

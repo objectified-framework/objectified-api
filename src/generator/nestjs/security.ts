@@ -39,58 +39,62 @@ function generateSecurity(directory: string, schemeName: string, schemeData: any
 function jwtUtilBody(schemeName: string): string {
   let body = '';
 
-  // JWT Encode/Decode import
-  body += '// JWT Secret Key: either JWT_SECRET_KEY in environment variable, or generated randomly on restart using faker.\n';
-  body += `export const SECRET_KEY = process.env.JWT_SECRET_KEY ?? '${faker.string.sample(64).replaceAll('\\', '\\\\').replaceAll('\'', '\\\'')}';\n\n`;
+  // JWT Encode/Decode import, encoder, decoder, and validator
+  body += `// JWT Secret Key: either JWT_SECRET_KEY in environment variable, or generated randomly on restart using faker.
+export const SECRET_KEY = process.env.JWT_SECRET_KEY ?? '${faker.string.sample(64).replaceAll('\\', '\\\\').replaceAll('\'', '\\\'')}';
 
-  // Encoder
-  body += '/**\n';
-  body += ' * Encrypts a JWT token with the given payload and possible timeout given as a string or numeric value.\n';
-  body += ' *\n';
-  body += ' * @param payload The data to encode into the JWT token\n';
-  body += ' * @param timeout The optional timeout for the JWT token as a string expression or numeric value in milliseconds\n';
-  body += ' * @returns The JWT token string\n';
-  body += ' */\n';
-  body += 'export function encrypt(payload: any, timeout?: string | number): string {\n';
-  body += '  const jwt = require(\'jsonwebtoken\');\n\n';
-  body += '  if (timeout) {\n';
-  body += '    return jwt.sign({ data: payload }, SECRET_KEY, { expiresIn: timeout });\n';
-  body += '  }\n\n';
-  body += '  return jwt.sign({ data: payload }, SECRET_KEY);\n';
-  body += '}\n\n';
+/**
+ * Encrypts a JWT token with the given payload and possible timeout given as a string or numeric value.
+ *
+ * @param payload The data to encode into the JWT token
+ * @param timeout The optional timeout for the JWT token as a string expression or numeric value in milliseconds
+ * @returns The JWT token string
+ */
+export function encrypt(payload: any, timeout?: string | number): string {
+  const jwt = require('jsonwebtoken');
+  
+  if (timeout) {
+    return jwt.sign({ data: payload }, SECRET_KEY, { expiresIn: timeout });
+  }
+  
+  return jwt.sign({ data: payload }, SECRET_KEY);
+}
 
-  // Decoder
-  body += '/**\n';
-  body += ' * Decrypts a JWT token payload from the given request object\'s Bearer authorization string.\n';
-  body += ' *\n';
-  body += ' * @param req The request object containing the bearer authorization token\n';
-  body += ' * @returns The decoded JWT token payload\n';
-  body += ' * @throws Error if the token is missing\n';
-  body += ' */\n';
-  body += 'export function decrypt(req: Request): any {\n';
-  body += '  const jwt = require(\'jsonwebtoken\');\n';
-  body += '  const token: string = req.headers.authorization?.split(\' \')[1];\n\n';
-  body += '  if (!token) {\n';
-  body += '    throw new Error(\'Missing JWT token\');\n';
-  body += '  }\n\n';
-  body += '  return jwt.verify(token, SECRET_KEY);\n';
-  body += '}\n\n';
+/**
+ * Decrypts a JWT token payload from the given request object's Bearer authorization string.
+ *
+ * @param req The request object containing the bearer authorization token
+ * @returns The decoded JWT token payload
+ * @throws Error if the token is missing
+ */
+export function decrypt(req: Request): any {
+  const jwt = require('jsonwebtoken');
+  const token: string = req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    throw new Error('Missing JWT token');
+  }
+  
+  return jwt.verify(token, SECRET_KEY);
+}
 
-  // Validator
-  body += '/**\n';
-  body += ' * Validates a JWT token payload from the given request object\'s Bearer authorization string.\n';
-  body += ' *\n';
-  body += ' * @param req The request object containing the bearer authorization token\n';
-  body += ' * @returns {boolean} `true` if valid, `false` otherwise, or if bearer authorization token is missing\n';
-  body += ' */\n';
-  body += `export function validate(req: Request): any {\n`;
-  body += '  const jwt = require(\'jsonwebtoken\');\n';
-  body += '  const token: string = req.headers.authorization?.split(\' \')[1];\n\n';
-  body += '  if (!token) {\n';
-  body += '    return false;\n';
-  body += '  }\n\n';
-  body += '  return jwt.verify(token, SECRET_KEY);\n';
-  body += '}\n';
+/**
+ * Validates a JWT token payload from the given request object's Bearer authorization string.
+ *
+ * @param req The request object containing the bearer authorization token
+ * @returns {boolean} \`true\` if valid, \`false\` otherwise, or if bearer authorization token is missing
+ */
+export function validate(req: Request): any {
+  const jwt = require('jsonwebtoken');
+  const token: string = req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    return false;
+  }
+  
+  return jwt.verify(token, SECRET_KEY);
+}
+`;
 
   return body;
 }

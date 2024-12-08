@@ -24,11 +24,17 @@ export function generateDtos(dtoDirectory: string, openapi: any) {
 
     // Add header to the class definition
     dtoBody += dtoHeader;
-    dtoBody += `/**\n * ${description.trim().replaceAll('\n', '\n * ')}\n */\n`;
-    dtoBody += `export class ${dtoName} {\n`;
-    dtoBody += '  /**\n   * This is the schema that is used to generate the DTO class.\n   * It is also used for validation purposes.\n   */\n';
-    dtoBody += `  public static schema: any = {\n`;
-    dtoBody += '    type: "object",\n';
+    dtoBody += `/**
+ * ${description.trim().replaceAll('\n', '\n * ')}
+ */
+export class ${dtoName} {
+  /**
+   * This is the schema that is used to generate the DTO class.
+   * It is also used for validation purposes.
+   */
+  public static schema: any = {
+    type: "object",
+`;
 
     if (required) {
       dtoBody += '    required: [ ';
@@ -54,16 +60,23 @@ export function generateDtos(dtoDirectory: string, openapi: any) {
     }
 
     // Add AJV validation
-    dtoBody += '  /**\n   * Tests a payload against the schema for this DTO.\n   *\n   * @throws Error on failed validations.\n   */\n';
-    dtoBody += `  public static validate(payload: ${dtoName}): boolean {\n`;
-    dtoBody += '    const Ajv = require("ajv");\n';
-    dtoBody += '    const addFormats = require("ajv-formats");\n';
-    dtoBody += '    const ajv = new Ajv({ strict: false });\n\n';
-    dtoBody += '    addFormats(ajv);\n\n';
-    dtoBody += '    const validate = ajv.compile(this.schema);\n';
-    dtoBody += '    return validate(payload);\n';
-    dtoBody += '  }\n';
-    dtoBody += '}\n';
+    dtoBody += `  /**
+   * Tests a payload against the schema for this DTO.
+   *
+   * @throws Error on failed validations.
+   */
+  public static validate(payload: ${dtoName}): boolean {
+    const Ajv = require("ajv");
+    const addFormats = require("ajv-formats");
+    const ajv = new Ajv({ strict: false });
+    
+    addFormats(ajv);
+    
+    const validate = ajv.compile(this.schema);
+    return validate(payload);
+  }
+}
+`;
 
     fs.writeFileSync(dtoFilename, dtoBody, 'utf8');
     console.log(`  - Wrote ${dtoFilename}`);

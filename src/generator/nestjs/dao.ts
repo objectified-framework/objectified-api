@@ -26,8 +26,8 @@ export function generateDaos(daoDirectory: string, openapi: any) {
 
     // Add header to the class definition
     daoBody += daoHeader;
-    daoBody += `import { ${dao}Dto } from "../dto";
-import { BaseDao } from "./BaseDao";
+    daoBody += `import { ${dao}Dto } from '../dto';
+import { BaseDao } from './BaseDao';
 
 /**
  * ${dao} Data Access Object

@@ -33,7 +33,7 @@ export class ${dtoName} {
    * It is also used for validation purposes.
    */
   public static schema: any = {
-    type: "object",
+    type: 'object',
 `;
 
     if (required) {
@@ -66,8 +66,8 @@ export class ${dtoName} {
    * @throws Error on failed validations.
    */
   public static validate(payload: ${dtoName}): boolean {
-    const Ajv = require("ajv");
-    const addFormats = require("ajv-formats");
+    const Ajv = require('ajv');
+    const addFormats = require('ajv-formats');
     const ajv = new Ajv({ strict: false });
     
     addFormats(ajv);

@@ -164,7 +164,7 @@ export const ${initCap(name)}${initCap(operationId)} = async (${inputVariables.j
 
     serviceClassBody += `    .then((x) => x.data)
     .catch((x) => {
-      console.error(\'Request failed\', x);
+      console.error('Request failed', x);
       return Promise.reject(x);
     });
 };

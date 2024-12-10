@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('@objectified/objectified-api/dist');
+require('@objectified-framework/objectified-api/dist');

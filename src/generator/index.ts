@@ -13,7 +13,7 @@ const CONTROLLER_DIRECTORY: string = 'src/generated/controllers';
 const CLIENT_DIRECTORY: string = 'src/generated/clients';
 const SERVICES_DIRECTORY: string = 'src/generated/services';
 const UTILS_DIRECTORY: string = 'src/generated/util';
-const VERSION: string = '0.1.11';
+const VERSION: string = '0.1.12';
 
 import * as fs from 'fs';
 import * as yaml from 'yaml';

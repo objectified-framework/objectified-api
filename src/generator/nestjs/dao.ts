@@ -47,10 +47,10 @@ export class ${daoName} extends BaseDao<${dao}Dto> {
     console.log(`  - Wrote ${daoFilename}`);
   }
 
-  fs.copyFileSync(path.join(__dirname, 'assets/BaseDao.ts'), `${daoDirectory}/BaseDao.ts`);
+  fs.copyFileSync(path.join(__dirname, '../assets/BaseDao.ts'), `${daoDirectory}/BaseDao.ts`);
   console.log(`  > Copied BaseDao.ts to ${daoDirectory}/BaseDao.ts`);
 
-  fs.copyFileSync(path.join(__dirname, 'assets/DaoUtils.ts'), `${daoDirectory}/DaoUtils.ts`);
+  fs.copyFileSync(path.join(__dirname, '../assets/DaoUtils.ts'), `${daoDirectory}/DaoUtils.ts`);
   console.log(`  > Copied DaoUtils.ts to ${daoDirectory}/DaoUtils.ts`);
 
   // Write index

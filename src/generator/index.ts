@@ -13,16 +13,16 @@ const CONTROLLER_DIRECTORY: string = 'src/generated/controllers';
 const CLIENT_DIRECTORY: string = 'src/generated/clients';
 const SERVICES_DIRECTORY: string = 'src/generated/services';
 const UTILS_DIRECTORY: string = 'src/generated/util';
+const VERSION: string = '0.1.9';
 
 import * as fs from 'fs';
 import * as yaml from 'yaml';
 
 (async () => {
-  const version = yaml.parse(fs.readFileSync('gen.yaml', 'utf8'))['version'];
   const { Command, Option } = require('commander');
   const program = new Command();
 
-  console.log(`Code Auto-Generator: ${version}`);
+  console.log(`Code Auto-Generator: ${VERSION}`);
 
   program
     .argument('<filename>', 'OpenAPI Input Specification')
